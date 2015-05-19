@@ -13,7 +13,8 @@ var Halo          = require('ora-halo');
 var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
 
 var State = {
-  color: 0
+  color: 0,
+  complexity: 0
 }
 
 Window.create({
@@ -30,8 +31,11 @@ Window.create({
     });
 
     this.gui = new GUI(this);
-    this.gui.addParam('Global Color', State, 'color', {}, function(value) {
+    this.gui.addParam('Global color', State, 'color', {}, function(value) {
       this.halo.setGlobalParam('color', value);
+    }.bind(this));
+    this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
+      this.halo.setGlobalParam('complexity', value);
     }.bind(this));
 
     this.camera = new Camera(60, this.width / this.height);
