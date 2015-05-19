@@ -15,9 +15,20 @@ var Texture2D     = require('pex-glu').Texture2D;
 var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
 
 var State = {
+  halo: null,
   color: 0,
   complexity: 0,
+  speed: 0.5,
   colorTextureIndex: 0,
+}
+
+function HaloSetGlobalParam(name, value) {
+  if (!State.halo) return;
+  State.halo.setGlobalParam(name, value);
+}
+
+if (Platform.isBrowser) {
+  window.HaloSetGlobalParam = HaloSetGlobalParam;
 }
 
 Window.create({
@@ -28,7 +39,7 @@ Window.create({
     fullscreen: Platform.isBrowser ? true : false
   },
   init: function() {
-    this.halo = new Halo({
+    State.halo = this.halo = new Halo({
       lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
       lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
       colorTexture: ASSETS_PATH + '/textures/calories-gradient.png'
@@ -44,13 +55,17 @@ Window.create({
   },
   initGUI: function() {
     this.gui = new GUI(this);
+    if (Platform.isBrowser) this.gui.toggleEnabled();
     this.gui.addParam('Global color', State, 'color', {}, function(value) {
       this.halo.setGlobalParam('color', value);
     }.bind(this));
     this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
       this.halo.setGlobalParam('complexity', value);
     }.bind(this));
-     this.colorTexturePaths = [
+    this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
+      this.halo.setGlobalParam('speed', value);
+    }.bind(this));
+    this.colorTexturePaths = [
      ASSETS_PATH + '/textures/calories-gradient.png',
      ASSETS_PATH + '/textures/halo-gradient-continuous.png',
      ASSETS_PATH + '/textures/halo-gradient.png'
@@ -64,6 +79,12 @@ Window.create({
     }), 3, function(index) {
       this.halo.setColorTexture(this.colorTexturePaths[index])
     }.bind(this))
+
+    this.on('keyDown', function(e) {
+      if (e.str == 'G') {
+        this.gui.toggleEnabled();
+      }
+    }.bind(this));
   },
   drawScene: function() {
     this.gl.lineWidth(3);
