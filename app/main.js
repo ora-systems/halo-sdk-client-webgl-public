@@ -26,7 +26,7 @@ Window.create({
   init: function() {
     this.halo = new Halo({
       lineTexture: ASSETS_PATH + '/textures/dots.png',
-      colorTexture: ASSETS_PATH + '/textures/halo-gradient.png'
+      colorTexture: ASSETS_PATH + '/textures/halo-gradient-continuous.png'
     });
 
     this.gui = new GUI(this);
