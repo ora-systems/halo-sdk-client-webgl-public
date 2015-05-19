@@ -16,8 +16,10 @@ var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
 
 var State = {
   halo: null,
+  size: 0.7,
   color: 0,
   complexity: 0,
+  brightness: 1,
   speed: 0.5,
   colorTextureIndex: 0,
 }
@@ -56,6 +58,9 @@ Window.create({
   initGUI: function() {
     this.gui = new GUI(this);
     if (Platform.isBrowser) this.gui.toggleEnabled();
+    this.gui.addParam('Global size', State, 'size', {}, function(value) {
+      this.halo.setGlobalParam('size', value);
+    }.bind(this));
     this.gui.addParam('Global color', State, 'color', {}, function(value) {
       this.halo.setGlobalParam('color', value);
     }.bind(this));
@@ -64,6 +69,9 @@ Window.create({
     }.bind(this));
     this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
       this.halo.setGlobalParam('speed', value);
+    }.bind(this));
+    this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
+      this.halo.setGlobalParam('brightness', value);
     }.bind(this));
     this.colorTexturePaths = [
      ASSETS_PATH + '/textures/calories-gradient.png',
