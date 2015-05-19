@@ -1,11 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <meta charset="UTF-8">
-        <title></title>
-        <script src="main.web.js"></script>
-    </head>
-    <body>
-    </body>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<title></title>
+<canvas id="haloCanvas" width="800" height="600"></canvas>
+<script src="main.web.js"></script>
+<script>
+/*
+//scenario A
+HaloSetMode('present')
+setInterval(function() {
+  //you can do it one by one or all at once
+  //HaloSetGlobalParams('size', 0.5);
+  HaloSetGlobalParams({
+    size: 0.2 + 0.8 * Math.random(),
+    color: 0.2 + 0.8 * Math.random(),
+    complexity: 0.2 + 0.8 * Math.random(),
+    speed: 0.2 + 0.8 * Math.random(),
+    brightness: 0.2 + 0.8 * Math.random(),
+    wobble: 0.2 + 0.8 * Math.random()
+  })
+}, 2000)
+*/
+
+//scenario B
+HaloSetMode('timeline')
+HaloSetGlobalParam('maxNumRings', 12); //e.g. every 2h
+setInterval(function() {
+  HaloAddTimeStamp({
+    color: 0.2 + 0.8 * Math.random(),
+    complexity: 0.2 + 0.8 * Math.random(),
+    speed: 0.2 + 0.8 * Math.random()
+  })
+}, 500)
+</script>
+</head>
+<body>
+</body>
 </html>

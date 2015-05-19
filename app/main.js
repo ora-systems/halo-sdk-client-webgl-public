@@ -24,13 +24,33 @@ var State = {
   colorTextureIndex: 0,
 }
 
+function HaloSetMode(mode) {
+  if (!State.halo) return;
+  State.halo.setMode(name);
+}
+
 function HaloSetGlobalParam(name, value) {
   if (!State.halo) return;
   State.halo.setGlobalParam(name, value);
 }
 
+function HaloSetGlobalParams(params) {
+  if (!State.halo) return;
+  Object.keys(params).forEach(function(paramName) {
+    HaloSetGlobalParam(paramName, params[paramName]);
+  });
+}
+
+function HaloAddTimeStamp(params) {
+  if (!State.halo) return;
+  State.halo.addTimeStamp(params);
+}
+
 if (Platform.isBrowser) {
+  window.HaloSetMode = HaloSetMode;
   window.HaloSetGlobalParam = HaloSetGlobalParam;
+  window.HaloSetGlobalParams = HaloSetGlobalParams;
+  window.HaloAddTimeStamp = HaloAddTimeStamp;
 }
 
 Window.create({
@@ -38,7 +58,7 @@ Window.create({
     width: 1280,
     height: 720,
     type: '3d',
-    fullscreen: Platform.isBrowser ? true : false
+    canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null
   },
   init: function() {
     State.halo = this.halo = new Halo({
