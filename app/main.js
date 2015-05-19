@@ -16,7 +16,7 @@ var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
 
 var State = {
   halo: null,
-  size: 0.7,
+  size: 0,
   color: 0,
   complexity: 0,
   brightness: 1,
