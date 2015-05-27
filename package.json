@@ -29,7 +29,7 @@
   },
   "scripts": {
     "watch": "./lib/watchscript.js",
-    "build": "browserify app/main.js --ignore-missing=plask -g brfs -o main.web.js"
+    "build": "browserify app/main.js --ignore plask -g brfs -g glslify-promise/transform -o main.web.js"
   },
   "browserify": {
     "transform": [
