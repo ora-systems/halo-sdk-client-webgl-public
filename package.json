@@ -28,7 +28,8 @@
     "watchify": "^2.3.0"
   },
   "scripts": {
-    "watch": "./lib/watchscript.js"
+    "watch": "./lib/watchscript.js",
+    "build": "browserify app/main.js --ignore-missing=plask -g brfs -o main.web.js"
   },
   "browserify": {
     "transform": [
