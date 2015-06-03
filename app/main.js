@@ -26,7 +26,7 @@ var State = {
 
 function HaloSetMode(mode) {
   if (!State.halo) return;
-  State.halo.setMode(name);
+  State.halo.setMode(mode);
 }
 
 function HaloSetGlobalParam(name, value) {
