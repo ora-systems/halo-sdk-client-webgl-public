@@ -26,7 +26,16 @@ setInterval(function() {
 
 //scenario B
 HaloSetMode('timeline')
-HaloSetGlobalParam('maxNumRings', 12); //e.g. every 2h
+HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+
+for(var i=0; i<24; i++) {
+  HaloAddTimeStamp({
+    color: 0.2 + 0.8 * Math.random(),
+    complexity: 0.2 + 0.8 * Math.random(),
+    speed: 0.2 + 0.8 * Math.random()
+  })
+}
+
 setInterval(function() {
   HaloAddTimeStamp({
     color: 0.2 + 0.8 * Math.random(),
