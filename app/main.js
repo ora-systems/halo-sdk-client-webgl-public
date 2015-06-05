@@ -22,6 +22,7 @@ var State = {
   brightness: 1,
   speed: 0.5,
   colorTextureIndex: 0,
+  wobble: 0
 }
 
 function HaloSetMode(mode) {
@@ -92,6 +93,9 @@ Window.create({
     }.bind(this));
     this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
       this.halo.setGlobalParam('brightness', value);
+    }.bind(this));
+     this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
+      this.halo.setGlobalParam('wobble', value);
     }.bind(this));
     this.colorTexturePaths = [
      ASSETS_PATH + '/textures/calories-gradient.png',
