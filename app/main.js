@@ -16,6 +16,8 @@ var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
 
 var State = {
   halo: null,
+  camera: null,
+  arcball: null,
   size: 0,
   color: 0,
   complexity: 0,
@@ -42,6 +44,11 @@ function HaloSetGlobalParams(params) {
   });
 }
 
+function HaloResetCamera(mode) {
+  if (!State.arcball) return;
+  State.arcball.setPosition(new Vec3(1,1,1))
+}
+
 function HaloAddTimeStamp(params) {
   if (!State.halo) return;
   State.halo.addTimeStamp(params);
@@ -64,9 +71,9 @@ function HaloInitialize() {
 
       this.initGUI();
 
-      this.camera = new Camera(60, this.width / this.height);
-      this.arcball = new Arcball(this, this.camera);
-      this.arcball.setPosition(new Vec3(1,1,1))
+      State.camera = new Camera(60, this.width / this.height);
+      State.arcball = new Arcball(this, State.camera);
+      State.arcball.setPosition(new Vec3(1,1,1))
 
       this.framerate(60);
     },
@@ -115,13 +122,13 @@ function HaloInitialize() {
     drawScene: function() {
       this.gl.lineWidth(3);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.draw(this.camera);
+      this.halo.draw(State.camera);
       glu.enableBlending(false);
     },
     drawSceneGlow: function() {
       this.gl.lineWidth(4);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.drawSolid(this.camera);
+      this.halo.drawSolid(State.camera);
       glu.enableBlending(false);
     },
     draw: function() {
@@ -146,7 +153,8 @@ if (Platform.isBrowser) {
   window.HaloSetGlobalParam = HaloSetGlobalParam;
   window.HaloSetGlobalParams = HaloSetGlobalParams;
   window.HaloAddTimeStamp = HaloAddTimeStamp;
-  window.HaloInitialize = HaloInitialize;  
+  window.HaloInitialize = HaloInitialize;
+  window.HaloResetCamera = HaloResetCamera;
 }
 else {
   HaloInitialize();
