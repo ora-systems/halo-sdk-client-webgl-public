@@ -148,4 +148,7 @@ if (Platform.isBrowser) {
   window.HaloAddTimeStamp = HaloAddTimeStamp;
   window.HaloInitialize = HaloInitialize;  
 }
+else {
+  HaloInitialize();
+}
 
