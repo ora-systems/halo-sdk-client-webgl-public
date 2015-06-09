@@ -12,7 +12,7 @@ var fx            = require('pex-fx');
 var Halo          = require('ora-halo');
 var Texture2D     = require('pex-glu').Texture2D;
 
-var ASSETS_PATH = Platform.isPlask ? '../assets' : 'assets';
+var ASSETS_PATH = Platform.isPlask ? '../assets' : '/assets';
 
 var State = {
   halo: null,
