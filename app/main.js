@@ -92,7 +92,7 @@ function HaloInitialize(opts) {
     },
     initGUI: function() {
       this.gui = new GUI(this);
-      if (Platform.isBrowser) this.gui.toggleEnabled();
+      if (Platform.isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
       this.gui.addParam('Global size', State, 'size', {}, function(value) {
         this.halo.setGlobalParam('size', value);
       }.bind(this));
