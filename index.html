@@ -25,9 +25,9 @@ setInterval(function() {
 */
 
 //scenario B
+HaloInitialize();
 HaloSetMode('timeline')
 HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
-HaloInitialize();
 
 for(var i=0; i<24; i++) {
   HaloAddTimeStamp({
