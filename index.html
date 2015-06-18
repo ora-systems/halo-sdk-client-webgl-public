@@ -7,43 +7,52 @@
 <canvas id="haloCanvas" width="800" height="600"></canvas>
 <script src="main.web.js"></script>
 <script>
-/*
+
 //scenario A
+HaloInitialize();
 HaloSetMode('present')
-setInterval(function() {
-  //you can do it one by one or all at once
-  //HaloSetGlobalParams('size', 0.5);
-  HaloSetGlobalParams({
-    size: 0.2 + 0.8 * Math.random(),
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random(),
-    brightness: 0.2 + 0.8 * Math.random(),
-    wobble: 0.2 + 0.8 * Math.random()
+HaloSetGlobalParams({
+    size: 1,
+    color: 1,
+    complexity: 1,
+    speed: 1,
+    brightness: 1,
+    wobble: 1
   })
-}, 2000)
-*/
+//setInterval(function() {
+//  //you can do it one by one or all at once
+//  //HaloSetGlobalParams('size', 0.5);
+//  HaloSetGlobalParams({
+//    size: 0.2 + 0.8 * Math.random(),
+//    color: 0.2 + 0.8 * Math.random(),
+//    complexity: 0.2 + 0.8 * Math.random(),
+//    speed: 0.2 + 0.8 * Math.random(),
+//    brightness: 0.2 + 0.8 * Math.random(),
+//    wobble: 0.2 + 0.8 * Math.random()
+//  })
+//}, 2000)
+
 
 //scenario B
-HaloInitialize();
-HaloSetMode('timeline')
-HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
-
-for(var i=0; i<24; i++) {
-  HaloAddTimeStamp({
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random()
-  })
-}
-
-setInterval(function() {
-  HaloAddTimeStamp({
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random()
-  })
-}, 500)
+//HaloInitialize();
+//HaloSetMode('timeline')
+//HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+//
+//for(var i=0; i<24; i++) {
+//  HaloAddTimeStamp({
+//    color: 0.2 + 0.8 * Math.random(),
+//    complexity: 0.2 + 0.8 * Math.random(),
+//    speed: 0.2 + 0.8 * Math.random()
+//  })
+//}
+//
+//setInterval(function() {
+//  HaloAddTimeStamp({
+//    color: 0.2 + 0.8 * Math.random(),
+//    complexity: 0.2 + 0.8 * Math.random(),
+//    speed: 0.2 + 0.8 * Math.random()
+//  })
+//}, 500)
 </script>
 </head>
 <body>

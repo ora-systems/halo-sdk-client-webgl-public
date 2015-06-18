@@ -8,7 +8,7 @@ var glu           = require('pex-glu');
 var Camera        = require('pex-glu').PerspectiveCamera;
 var Arcball       = require('pex-glu').Arcball;
 var GUI           = require('pex-gui').GUI;
-var fx            = require('pex-fx');
+var fx            = require('fx');
 var Halo          = require('ora-halo');
 var Texture2D     = require('pex-glu').Texture2D;
 
@@ -18,13 +18,14 @@ var State = {
   halo: null,
   camera: null,
   arcball: null,
-  size: 0,
+  size: 1,
   color: 0,
   complexity: 0,
   brightness: 1,
   speed: 0.5,
   colorTextureIndex: 0,
-  wobble: 0
+  wobble: 0,
+  debug: true
 }
 
 function HaloSetMode(mode) {
@@ -68,6 +69,13 @@ function HaloInitialize() {
         lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
         colorTexture: ASSETS_PATH + '/textures/calories-gradient.png'
       });
+
+      this.halo.setGlobalParam('size', State.size);
+      this.halo.setGlobalParam('color', State.color);
+      this.halo.setGlobalParam('complexity', State.complexity);
+      this.halo.setGlobalParam('speed', State.speed);
+      this.halo.setGlobalParam('brightness', State.brightness);
+      this.halo.setGlobalParam('wobble', State.wobble);
 
       this.initGUI();
 
@@ -117,6 +125,9 @@ function HaloInitialize() {
         if (e.str == 'G') {
           this.gui.toggleEnabled();
         }
+        if (e.str == 'd') {
+          State.debug = true;
+        }
       }.bind(this));
     },
     drawScene: function() {
@@ -136,14 +147,41 @@ function HaloInitialize() {
       glu.clearColorAndDepth(Color.Black);
       glu.enableDepthReadAndWrite(true);
 
+      var W = this.width;
+      var H = this.height;
+
+      if (State.debug) { console.log('---') }
+
+      if (State.debug) { this.gl.finish(); console.time('frame'); }
+
+      if (State.debug) { this.gl.finish(); console.time('update'); }
       this.halo.update();
+      if (State.debug) { this.gl.finish(); console.timeEnd('update'); }
 
-      var color = fx().render({ drawFunc: this.drawScene.bind(this)});
-      glow = color.render({ drawFunc: this.drawSceneGlow.bind(this)}).downsample4().downsample2().blur5().blur5();
-      var final = color.add(glow, { scale: 0.75 });
-      final.blit({ width: this.width, height: this.height });
+      if (State.debug) { this.gl.finish(); console.time('halo'); }
+      var color = fx()
+        .render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
+      if (State.debug) { this.gl.finish(); console.timeEnd('halo'); }
 
+      if (State.debug) { this.gl.finish(); console.time('fx'); }
+      glow = color
+        .render({ drawFunc: this.drawSceneGlow.bind(this)})
+        .downsample4()
+        .downsample2()
+        .blur5()
+        .blur5();
+      var final = color
+        .add(glow, { scale: 0.75});
+      final.blit({ width: W, height: H });
+      if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
+
+      if (State.debug) { this.gl.finish(); console.time('gui'); }
       this.gui.draw();
+      if (State.debug) { this.gl.finish(); console.timeEnd('gui'); }
+
+      if (State.debug) { this.gl.finish(); console.timeEnd('frame'); }
+
+      if (State.debug) { State.debug = false; }
     }
   });
 }
