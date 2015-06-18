@@ -57,6 +57,9 @@ function HaloAddTimeStamp(params) {
 
 function HaloInitialize(opts) {
   opts = opts || { };
+  if (opts.assetsPath) {
+    ASSETS_PATH = opts.assetsPath;
+  }
   Window.create({
     settings: {
       width: 1280,
