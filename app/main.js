@@ -18,9 +18,9 @@ var State = {
   halo: null,
   camera: null,
   arcball: null,
-  size: 1,
-  color: 0,
-  complexity: 0,
+  size: 0.6,
+  color: 0.05,
+  complexity: 0.7,
   brightness: 1,
   speed: 0.5,
   colorTextureIndex: 0,
@@ -55,13 +55,15 @@ function HaloAddTimeStamp(params) {
   State.halo.addTimeStamp(params);
 }
 
-function HaloInitialize() {
+function HaloInitialize(opts) {
+  opts = opts || { };
   Window.create({
     settings: {
       width: 1280,
       height: 720,
       type: '3d',
-      canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null
+      canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null,
+      fullscreen: opts.fullscreen
     },
     init: function() {
       State.halo = this.halo = new Halo({
@@ -131,13 +133,13 @@ function HaloInitialize() {
       }.bind(this));
     },
     drawScene: function() {
-      this.gl.lineWidth(3);
+      this.gl.lineWidth(2);
       glu.clearColorAndDepth(Color.Black);
       this.halo.draw(State.camera);
       glu.enableBlending(false);
     },
     drawSceneGlow: function() {
-      this.gl.lineWidth(4);
+      this.gl.lineWidth(3);
       glu.clearColorAndDepth(Color.Black);
       this.halo.drawSolid(State.camera);
       glu.enableBlending(false);
