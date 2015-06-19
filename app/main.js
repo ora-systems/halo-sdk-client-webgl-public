@@ -66,7 +66,8 @@ function HaloInitialize(opts) {
       height: 720,
       type: '3d',
       canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null,
-      fullscreen: opts.fullscreen
+      fullscreen: opts.fullscreen,
+      highdpi: Platform.isiOS ? 2 : 1
     },
     init: function() {
       State.halo = this.halo = new Halo({
@@ -84,15 +85,32 @@ function HaloInitialize(opts) {
 
       this.initGUI();
 
+      if (Platform.isiOS) {
+        this.on('mouseDragged', function(e) {
+          if (e.y > this.height * 0.8) {
+            e.handled = true;
+            this.halo.setGlobalParam('complexity', e.x / this.width);
+            this.halo.setGlobalParam('color', e.x / this.width * 0.9);
+            this.halo.setGlobalParam('size', e.x / this.width);
+          }
+        }.bind(this));
+      }
+
+      this.on('resize', function() {
+        State.camera.setAspectRatio(this.width/this.height);
+        this.gl.viewport(0, 0, this.width, this.height);
+      }.bind(this))
+
       State.camera = new Camera(60, this.width / this.height);
       State.arcball = new Arcball(this, State.camera);
-      State.arcball.setPosition(new Vec3(1,1,1))
+      State.arcball.setPosition(new Vec3(2,2,2));
 
       this.framerate(60);
     },
     initGUI: function() {
       this.gui = new GUI(this);
       if (Platform.isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
+      else if (Platform.isiOS) this.gui.toggleEnabled();
       this.gui.addParam('Global size', State, 'size', {}, function(value) {
         this.halo.setGlobalParam('size', value);
       }.bind(this));
