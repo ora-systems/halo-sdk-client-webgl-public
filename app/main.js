@@ -25,7 +25,12 @@ var State = {
   speed: 0.5,
   colorTextureIndex: 0,
   wobble: 0,
-  debug: true
+  debug: true,
+
+  centerHeight: 0,
+  minCycles: 10,
+  maxCycles: 20,
+  stratifiedAmplitude: 1
 }
 
 function HaloSetMode(mode) {
@@ -103,7 +108,7 @@ function HaloInitialize(opts) {
 
       State.camera = new Camera(60, this.width / this.height);
       State.arcball = new Arcball(this, State.camera);
-      State.arcball.setPosition(new Vec3(2,2,2));
+      State.arcball.setPosition(new Vec3(5,5,5));
 
       this.framerate(60);
     },
@@ -126,7 +131,7 @@ function HaloInitialize(opts) {
       this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
         this.halo.setGlobalParam('brightness', value);
       }.bind(this));
-       this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
+      this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
         this.halo.setGlobalParam('wobble', value);
       }.bind(this));
       this.colorTexturePaths = [
@@ -143,6 +148,21 @@ function HaloInitialize(opts) {
       }), 3, function(index) {
         this.halo.setColorTexture(this.colorTexturePaths[index])
       }.bind(this))
+
+      this.gui.addSeparator();
+      this.gui.addParam('Stratified amplitude', State, 'stratifiedAmplitude', { min: 0, max: 2 }, function(value) {
+        this.halo.setGlobalParam('stratifiedAmplitude', value);
+      }.bind(this));
+      this.gui.addParam('Center height', State, 'centerHeight', { min: 0, max: 2 }, function(value) {
+        this.halo.setGlobalParam('centerHeight', value);
+      }.bind(this));
+      this.gui.addParam('Min cycles', State, 'minCycles', { min: 0, max: 40 }, function(value) {
+        this.halo.setGlobalParam('minCycles', value);
+      }.bind(this));
+      this.gui.addParam('Max cycles', State, 'maxCycles', { min: 0, max: 40 }, function(value) {
+        this.halo.setGlobalParam('maxCycles', value);
+      }.bind(this));
+
 
       this.on('keyDown', function(e) {
         if (e.str == 'G') {
@@ -183,7 +203,7 @@ function HaloInitialize(opts) {
 
       if (State.debug) { this.gl.finish(); console.time('halo'); }
       var color = fx()
-        .render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
+        .render({ drawFunc: this.drawScene.bind(this), width: W, height: H, depth: true});
       if (State.debug) { this.gl.finish(); console.timeEnd('halo'); }
 
       if (State.debug) { this.gl.finish(); console.time('fx'); }
@@ -219,5 +239,23 @@ if (Platform.isBrowser) {
 }
 else {
   HaloInitialize();
+  HaloSetMode('timeline')
+  HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+  HaloSetGlobalParam('maxRingRadius', 3);
+
+  for(var i=0; i<24; i++) {
+    HaloAddTimeStamp({
+      color: 0.2 + 0.8 * Math.random(),
+      complexity: 0.2 + 0.8 * Math.random(),
+      speed: 0.2 + 0.8 * Math.random()
+    })
+  }
+  setInterval(function() {
+    HaloAddTimeStamp({
+      color: 0.2 + 0.8 * Math.random(),
+      complexity: 0.2 + 0.8 * Math.random(),
+      speed: 0.2 + 0.8 * Math.random()
+    })
+  }, 500)
 }
 

@@ -9,11 +9,11 @@
 <script>
 
 //scenario A
-HaloInitialize({
-  fullscreen: true,
-  gui: true,
-  assetsPath: 'assets'
-});
+//HaloInitialize({
+//  fullscreen: true,
+//  gui: true,
+//  assetsPath: 'assets'
+//});
 //HaloSetMode('present')
 //HaloSetGlobalParams({
 //    size: 0.6,
@@ -37,9 +37,14 @@ HaloInitialize({
 //}, 2000)
 
 //scenario B
-HaloInitialize();
+HaloInitialize({
+  fullscreen: true,
+  gui: true,
+  assetsPath: 'assets'
+});
 HaloSetMode('timeline')
 HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+HaloSetGlobalParam('maxRingRadius', 3);
 
 for(var i=0; i<24; i++) {
   HaloAddTimeStamp({
