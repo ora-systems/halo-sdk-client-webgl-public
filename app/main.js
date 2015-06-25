@@ -28,8 +28,8 @@ var State = {
   debug: true,
 
   centerHeight: 0,
-  minCycles: 10,
-  maxCycles: 20,
+  minCycles: 5,
+  maxCycles: 10,
   stratifiedAmplitude: 1
 }
 
@@ -240,7 +240,7 @@ if (Platform.isBrowser) {
 else {
   HaloInitialize();
   HaloSetMode('timeline')
-  HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+  HaloSetGlobalParam('maxNumRings', 10); //e.g. every 2h
   HaloSetGlobalParam('maxRingRadius', 3);
 
   for(var i=0; i<24; i++) {
@@ -250,6 +250,7 @@ else {
       speed: 0.2 + 0.8 * Math.random()
     })
   }
+
   setInterval(function() {
     HaloAddTimeStamp({
       color: 0.2 + 0.8 * Math.random(),
