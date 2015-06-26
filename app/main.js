@@ -11,6 +11,7 @@ var GUI           = require('pex-gui').GUI;
 var fx            = require('fx');
 var Halo          = require('ora-halo');
 var Texture2D     = require('pex-glu').Texture2D;
+var R             = require('ramda');
 
 var ASSETS_PATH = Platform.isPlask ? '../assets' : '/assets';
 
@@ -27,10 +28,22 @@ var State = {
   wobble: 0,
   debug: true,
 
+  //stratified halo
+  compactness: 1,
+  maxNumRings: 12,
   centerHeight: 0,
   minCycles: 5,
   maxCycles: 10,
-  stratifiedAmplitude: 1
+  stratifiedAmplitude: 0.5,
+  minRingWidth: 0.02,
+  maxRingWidth: 0.1,
+  timelineTransparency: false,
+
+  //ring
+  ringIndex: -1,
+  ringSpeed: 0,
+  ringColor: 0,
+  ringComplexity: 0
 }
 
 function HaloSetMode(mode) {
@@ -41,6 +54,11 @@ function HaloSetMode(mode) {
 function HaloSetGlobalParam(name, value) {
   if (!State.halo) return;
   State.halo.setGlobalParam(name, value);
+}
+
+function HaloSetRingParam(ringIndex, name, value) {
+  if (!State.halo) return;
+  State.halo.setRingParam(ringIndex, name, value);
 }
 
 function HaloSetGlobalParams(params) {
@@ -134,6 +152,7 @@ function HaloInitialize(opts) {
       this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
         this.halo.setGlobalParam('wobble', value);
       }.bind(this));
+
       this.colorTexturePaths = [
        ASSETS_PATH + '/textures/calories-gradient.png',
        ASSETS_PATH + '/textures/halo-gradient-continuous.png',
@@ -150,8 +169,26 @@ function HaloInitialize(opts) {
       }.bind(this))
 
       this.gui.addSeparator();
+      this.gui.addHeader('Stratified / "timeline"')
+      this.gui.addParam('Num rings', State, 'maxNumRings', { min: 0, max: 60, step: 1 }, function(value) {
+        HaloSetMode('timeline');
+        this.halo.setGlobalParam('maxNumRings', value);
+        for(var i=0; i<value; i++) {
+          HaloAddTimeStamp({
+            color: 0.2 + 0.8 * Math.random(),
+            complexity: 0, //0.2 + 0.8 * Math.random(),
+            speed: 0.2 + 0.8 * Math.random()
+          })
+        }
+      }.bind(this));
+      this.gui.addParam('Transparency', State, 'timelineTransparency', {}, function(value) {
+        this.halo.setGlobalParam('timelineTransparency', value);
+      }.bind(this));
       this.gui.addParam('Stratified amplitude', State, 'stratifiedAmplitude', { min: 0, max: 2 }, function(value) {
         this.halo.setGlobalParam('stratifiedAmplitude', value);
+      }.bind(this));
+      this.gui.addParam('Compactness', State, 'compactness', { min: 1, max: 3 }, function(value) {
+        this.halo.setGlobalParam('compactness', value);
       }.bind(this));
       this.gui.addParam('Center height', State, 'centerHeight', { min: 0, max: 2 }, function(value) {
         this.halo.setGlobalParam('centerHeight', value);
@@ -162,7 +199,36 @@ function HaloInitialize(opts) {
       this.gui.addParam('Max cycles', State, 'maxCycles', { min: 0, max: 40 }, function(value) {
         this.halo.setGlobalParam('maxCycles', value);
       }.bind(this));
+      this.gui.addParam('Min ring width', State, 'minRingWidth', { min: 0, max: 0.2 }, function(value) {
+        this.halo.setGlobalParam('minRingWidth', value);
+      }.bind(this));
+      this.gui.addParam('Max ring width', State, 'maxRingWidth', { min: 0, max: 0.5 }, function(value) {
+        this.halo.setGlobalParam('maxRingWidth', value);
+      }.bind(this));
 
+      this.gui.addHeader('Ring').setPosition(this.width - 180, 10)
+
+      this.gui.addParam('Ring color', State, 'ringColor', { min: 0, max: 1 }, function(value) {
+        this.halo.setRingParam(State.ringIndex, 'color', value);
+      }.bind(this));
+      this.gui.addParam('Ring complexity', State, 'ringComplexity', { min: 0, max: 1 }, function(value) {
+        this.halo.setRingParam(State.ringIndex, 'complexity', value);
+      }.bind(this));
+      this.gui.addParam('Ring speed', State, 'ringSpeed', { min: 0, max: 1 }, function(value) {
+        this.halo.setRingParam(State.ringIndex, 'speed', value);
+      }.bind(this));
+      var ringIndexList = R.range(0, 24).map(function(i) {
+        return { name: '' + i, value: i };
+      });
+      ringIndexList.unshift({ name: 'All', value: -1 })
+      this.gui.addRadioList('Ring', State, 'ringIndex', ringIndexList, function(value) {
+        var inst = this.halo.ringInstances[value];
+        if(inst) {
+          State.ringColor = inst.uniforms.color;
+          State.ringComplexity = inst.uniforms.complexity;
+          State.ringSpeed = inst.uniforms.speed;
+        }
+      }.bind(this));
 
       this.on('keyDown', function(e) {
         if (e.str == 'G') {
@@ -240,23 +306,15 @@ if (Platform.isBrowser) {
 else {
   HaloInitialize();
   HaloSetMode('timeline')
-  HaloSetGlobalParam('maxNumRings', 10); //e.g. every 2h
+  HaloSetGlobalParam('maxNumRings', 12); //e.g. every 2h
   HaloSetGlobalParam('maxRingRadius', 3);
 
-  for(var i=0; i<24; i++) {
+  for(var i=0; i<12; i++) {
     HaloAddTimeStamp({
       color: 0.2 + 0.8 * Math.random(),
-      complexity: 0.2 + 0.8 * Math.random(),
+      complexity: i/12,
       speed: 0.2 + 0.8 * Math.random()
     })
   }
-
-  setInterval(function() {
-    HaloAddTimeStamp({
-      color: 0.2 + 0.8 * Math.random(),
-      complexity: 0.2 + 0.8 * Math.random(),
-      speed: 0.2 + 0.8 * Math.random()
-    })
-  }, 500)
 }
 
