@@ -43,16 +43,17 @@ HaloInitialize({
   assetsPath: 'assets'
 });
 HaloSetMode('timeline')
-HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+HaloSetGlobalParam('maxNumRings', 12); //e.g. every 2h
 HaloSetGlobalParam('maxRingRadius', 3);
 
-for(var i=0; i<24; i++) {
+for(var i=0; i<12; i++) {
   HaloAddTimeStamp({
     color: 0.2 + 0.8 * Math.random(),
     complexity: 0.2 + 0.8 * Math.random(),
     speed: 0.2 + 0.8 * Math.random()
   })
 }
+
 
 setInterval(function() {
   HaloAddTimeStamp({
@@ -61,6 +62,7 @@ setInterval(function() {
     speed: 0.2 + 0.8 * Math.random()
   })
 }, 500)
+
 </script>
 </head>
 <body>

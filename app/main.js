@@ -26,7 +26,12 @@ var State = {
   speed: 0.5,
   colorTextureIndex: 0,
   wobble: 0,
+  alpha: 1,
+  glowStrength: 1,
+  glowSize: 2,
+  glowIterations: 1,
   debug: true,
+  acceptData: true,
 
   //stratified halo
   compactness: 1,
@@ -37,7 +42,7 @@ var State = {
   stratifiedAmplitude: 0.5,
   minRingWidth: 0.02,
   maxRingWidth: 0.1,
-  timelineTransparency: false,
+  timelineTransparency: true,
 
   //ring
   ringIndex: -1,
@@ -74,7 +79,7 @@ function HaloResetCamera(mode) {
 }
 
 function HaloAddTimeStamp(params) {
-  if (!State.halo) return;
+  if (!State.halo || !State.acceptData) return;
   State.halo.addTimeStamp(params);
 }
 
@@ -96,7 +101,7 @@ function HaloInitialize(opts) {
       State.halo = this.halo = new Halo({
         lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
         lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: ASSETS_PATH + '/textures/calories-gradient.png'
+        colorTexture: ASSETS_PATH + '/textures/halo-gradient-new.png',
       });
 
       this.halo.setGlobalParam('size', State.size);
@@ -153,10 +158,18 @@ function HaloInitialize(opts) {
         this.halo.setGlobalParam('wobble', value);
       }.bind(this));
 
+      this.gui.addParam('Global alpha', State, 'alpha', {}, function(value) {
+        this.halo.setGlobalParam('alpha', value);
+      }.bind(this));
+
+      this.gui.addParam('Global glow size', State, 'glowSize', { min: 0, max: 5});
+      this.gui.addParam('Global glow strength', State, 'glowStrength', { min: 0, max: 5 });
+      this.gui.addParam('Global glow iterations', State, 'glowIterations', { min: 1, max: 5, step: 1 });
+
       this.colorTexturePaths = [
+       ASSETS_PATH + '/textures/halo-gradient-new.png',
        ASSETS_PATH + '/textures/calories-gradient.png',
-       ASSETS_PATH + '/textures/halo-gradient-continuous.png',
-       ASSETS_PATH + '/textures/halo-gradient.png'
+       ASSETS_PATH + '/textures/halo-gradient-continuous.png'
       ]
       this.colorTextures = this.colorTexturePaths.map(function(path) {
         return Texture2D.load(path);
@@ -206,7 +219,10 @@ function HaloInitialize(opts) {
         this.halo.setGlobalParam('maxRingWidth', value);
       }.bind(this));
 
-      this.gui.addHeader('Ring').setPosition(this.width - 180, 10)
+      this.gui.addHeader('Data').setPosition(this.width - 180, 10);
+      this.gui.addParam('Accept data', State, 'acceptData');
+
+      this.gui.addHeader('Ring')
 
       this.gui.addParam('Ring color', State, 'ringColor', { min: 0, max: 1 }, function(value) {
         this.halo.setRingParam(State.ringIndex, 'color', value);
@@ -270,6 +286,7 @@ function HaloInitialize(opts) {
       if (State.debug) { this.gl.finish(); console.time('halo'); }
       var color = fx()
         .render({ drawFunc: this.drawScene.bind(this), width: W, height: H, depth: true});
+      color = color.fxaa();
       if (State.debug) { this.gl.finish(); console.timeEnd('halo'); }
 
       if (State.debug) { this.gl.finish(); console.time('fx'); }
@@ -277,10 +294,9 @@ function HaloInitialize(opts) {
         .render({ drawFunc: this.drawSceneGlow.bind(this)})
         .downsample4()
         .downsample2()
-        .blur5()
-        .blur5();
+        .blur({ amount : State.glowSize, iterations: State.glowIterations })
       var final = color
-        .add(glow, { scale: 0.75});
+        .add(glow, { scale: State.glowStrength });
       final.blit({ width: W, height: H });
       if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
 
@@ -316,5 +332,13 @@ else {
       speed: 0.2 + 0.8 * Math.random()
     })
   }
+
+  //setInterval(function() {
+  //HaloAddTimeStamp({
+  //  color: 0.2 + 0.8 * Math.random(),
+  //  complexity: 0.2 + 0.8 * Math.random(),
+  //  speed: 0.2 + 0.8 * Math.random()
+  //})
+  //}, 500)
 }
 
