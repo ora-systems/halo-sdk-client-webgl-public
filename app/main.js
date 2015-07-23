@@ -219,5 +219,14 @@ if (Platform.isBrowser) {
 }
 else {
   HaloInitialize();
+  HaloSetMode('present')
+  HaloSetGlobalParams({
+    size: 0.6,
+    color: 0.05,
+    complexity: 0.6,
+    speed: 0.5,
+    brightness: 1,
+    wobble: 0.1
+  })
 }
 
