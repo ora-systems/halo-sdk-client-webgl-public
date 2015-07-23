@@ -103,7 +103,7 @@ function HaloInitialize(opts) {
 
       State.camera = new Camera(60, this.width / this.height);
       State.arcball = new Arcball(this, State.camera);
-      State.arcball.setPosition(new Vec3(2,2,2));
+      State.arcball.setPosition(new Vec3(0,3,0));
 
       this.framerate(60);
     },
