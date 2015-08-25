@@ -75,7 +75,8 @@ function HaloInitialize(opts) {
       State.halo = this.halo = new Halo({
         lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
         lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: ASSETS_PATH + '/textures/calories-gradient.png'
+        colorTexture: ASSETS_PATH + '/textures/calories-gradient.png',
+        gridColorTexture: ASSETS_PATH + '/textures/line-solid.png',
       });
 
       this.halo.setGlobalParam('size', State.size);
