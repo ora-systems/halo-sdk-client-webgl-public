@@ -22,6 +22,7 @@
     "pex-materials": "^0.1.2",
     "pex-random": "^0.2.1",
     "pex-sys": "^0.4.2",
+    "pex-typo": "^0.1.0",
     "ramda": "^0.14.0",
     "re-map": "^0.1.1",
     "vinyl-source-stream": "^1.0.0",

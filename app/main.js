@@ -6,6 +6,7 @@ var Vec3          = require('pex-geom').Vec3;
 var Vec2          = require('pex-geom').Vec2;
 var glu           = require('pex-glu');
 var Camera        = require('pex-glu').PerspectiveCamera;
+var Camera2D      = require('pex-glu').OrthographicCamera;
 var Arcball       = require('pex-glu').Arcball;
 var GUI           = require('pex-gui').GUI;
 var fx            = require('fx');
@@ -107,6 +108,7 @@ function HaloInitialize(opts) {
       }.bind(this))
 
       State.camera = new Camera(60, this.width / this.height);
+      State.camera2D = new Camera2D(0, 0, this.width, this.height);
       State.arcball = new Arcball(this, State.camera);
       State.arcball.setPosition(new Vec3(0,3,0));
 
@@ -167,13 +169,13 @@ function HaloInitialize(opts) {
     drawScene: function() {
       this.gl.lineWidth(2);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.draw(State.camera);
+      this.halo.draw(State.camera, State.camera2D, this.width, this.height);
       glu.enableBlending(false);
     },
     drawSceneGlow: function() {
       this.gl.lineWidth(3);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.drawSolid(State.camera);
+      this.halo.drawSolid(State.camera, State.camera2D, this.width, this.height);
       glu.enableBlending(false);
     },
     draw: function() {
