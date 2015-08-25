@@ -20,6 +20,8 @@ var State = {
   arcball: null,
   size: 0.6,
   color: 0.05,
+  colorCenter: 0.0,
+  colorCenterRatio: 0.0,
   complexity: 0.7,
   brightness: 1,
   speed: 0.5,
@@ -78,6 +80,8 @@ function HaloInitialize(opts) {
 
       this.halo.setGlobalParam('size', State.size);
       this.halo.setGlobalParam('color', State.color);
+      this.halo.setGlobalParam('colorCenter', State.colorCenter);
+      this.halo.setGlobalParam('colorCenterRatio', State.colorCenterRatio);
       this.halo.setGlobalParam('complexity', State.complexity);
       this.halo.setGlobalParam('speed', State.speed);
       this.halo.setGlobalParam('brightness', State.brightness);
@@ -116,6 +120,12 @@ function HaloInitialize(opts) {
       }.bind(this));
       this.gui.addParam('Global color', State, 'color', {}, function(value) {
         this.halo.setGlobalParam('color', value);
+      }.bind(this));
+      this.gui.addParam('Global color center', State, 'colorCenter', {}, function(value) {
+        this.halo.setGlobalParam('colorCenter', value);
+      }.bind(this));
+      this.gui.addParam('Global color center ratio', State, 'colorCenterRatio', {}, function(value) {
+        this.halo.setGlobalParam('colorCenterRatio', value);
       }.bind(this));
       this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
         this.halo.setGlobalParam('complexity', value);

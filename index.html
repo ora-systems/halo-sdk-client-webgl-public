@@ -14,29 +14,33 @@ HaloInitialize({
   gui: true,
   assetsPath: 'assets'
 });
-//HaloSetMode('present')
-//HaloSetGlobalParams({
-//    size: 0.6,
-//    color: 0.05,
-//    complexity: 0.6,
-//    speed: 0.5,
-//    brightness: 1,
-//    wobble: 0.1
-//  })
-//setInterval(function() {
-//  //you can do it one by one or all at once
-//  //HaloSetGlobalParams('size', 0.5);
-//  HaloSetGlobalParams({
-//    size: 0.2 + 0.8 * Math.random(),
-//    color: 0.2 + 0.8 * Math.random(),
-//    complexity: 0.2 + 0.8 * Math.random(),
-//    speed: 0.2 + 0.8 * Math.random(),
-//    brightness: 0.2 + 0.8 * Math.random(),
-//    wobble: 0.2 + 0.8 * Math.random()
-//  })
-//}, 2000)
+HaloSetMode('present');
+HaloSetGlobalParams({
+    size: 0.6,
+    color: 0.05,
+    complexity: 0.6,
+    speed: 0.5,
+    brightness: 1,
+    wobble: 0.1
+  })
+
+/*
+setInterval(function() {
+  //you can do it one by one or all at once
+  //HaloSetGlobalParams('size', 0.5);
+  HaloSetGlobalParams({
+    size: 0.2 + 0.8 * Math.random(),
+    color: 0.2 + 0.8 * Math.random(),
+    complexity: 0.2 + 0.8 * Math.random(),
+    speed: 0.2 + 0.8 * Math.random(),
+    brightness: 0.2 + 0.8 * Math.random(),
+    wobble: 0.2 + 0.8 * Math.random()
+  })
+}, 2000)
+*/
 
 //scenario B
+/*
 HaloInitialize();
 HaloSetMode('timeline')
 HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
@@ -56,6 +60,7 @@ setInterval(function() {
     speed: 0.2 + 0.8 * Math.random()
   })
 }, 500)
+*/
 </script>
 </head>
 <body>
