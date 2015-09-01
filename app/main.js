@@ -58,15 +58,26 @@ function HaloAddTimeStamp(params) {
   State.halo.addTimeStamp(params);
 }
 
-function HaloInitialize(opts) {
-  opts = opts || { };
+function HaloInitialize(userOpts) {
+  opts = {
+    width: 1280,
+    height: 720,
+    scale: 60,
+    gradient: '/textures/calories-gradient.png'
+  };
+  for (var p in userOpts) {
+    if (userOpts.hasOwnProperty(p)) {
+      opts[p] = userOpts[p];
+    }
+  }
+
   if (opts.assetsPath) {
     ASSETS_PATH = opts.assetsPath;
   }
   Window.create({
     settings: {
-      width: 1280,
-      height: 720,
+      width: opts.width,
+      height: opts.height,
       type: '3d',
       canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null,
       fullscreen: opts.fullscreen,
@@ -76,7 +87,7 @@ function HaloInitialize(opts) {
       State.halo = this.halo = new Halo({
         lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
         lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: ASSETS_PATH + '/textures/calories-gradient.png',
+        colorTexture: ASSETS_PATH + opts.gradient,
         gridColorTexture: ASSETS_PATH + '/textures/line-solid.png',
       });
 
@@ -107,7 +118,7 @@ function HaloInitialize(opts) {
         this.gl.viewport(0, 0, this.width, this.height);
       }.bind(this))
 
-      State.camera = new Camera(60, this.width / this.height);
+      State.camera = new Camera(opts.scale, this.width / this.height);
       State.camera2D = new Camera2D(0, 0, this.width, this.height);
       State.arcball = new Arcball(this, State.camera);
       State.arcball.setPosition(new Vec3(0,3,0));
