@@ -4,6 +4,7 @@ var Window        = require('pex-sys').Window;
 var Color         = require('pex-color').Color;
 var Vec3          = require('pex-geom').Vec3;
 var Vec2          = require('pex-geom').Vec2;
+var Random        = require('pex-random');
 var glu           = require('pex-glu');
 var Camera        = require('pex-glu').PerspectiveCamera;
 var Camera2D      = require('pex-glu').OrthographicCamera;
@@ -63,7 +64,8 @@ function HaloInitialize(userOpts) {
     width: 1280,
     height: 720,
     scale: 60,
-    gradient: '/textures/calories-gradient.png'
+    gradient: '/textures/calories-gradient.png',
+    showLabels: true
   };
   for (var p in userOpts) {
     if (userOpts.hasOwnProperty(p)) {
@@ -84,21 +86,30 @@ function HaloInitialize(userOpts) {
       highdpi: Platform.isiOS ? 2 : 1
     },
     init: function() {
-      State.halo = this.halo = new Halo({
-        lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
-        lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: ASSETS_PATH + opts.gradient,
-        gridColorTexture: ASSETS_PATH + '/textures/line-solid.png',
-      });
+      State.halos = [];
+      for(var i=0; i<6; i++) {
+          var halo = new Halo({
+            lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
+            lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
+            colorTexture: ASSETS_PATH + opts.gradient,
+            gridColorTexture: ASSETS_PATH + '/textures/line-solid.png',
+          });
 
-      this.halo.setGlobalParam('size', State.size);
-      this.halo.setGlobalParam('color', State.color);
-      this.halo.setGlobalParam('colorCenter', State.colorCenter);
-      this.halo.setGlobalParam('colorCenterRatio', State.colorCenterRatio);
-      this.halo.setGlobalParam('complexity', State.complexity);
-      this.halo.setGlobalParam('speed', State.speed);
-      this.halo.setGlobalParam('brightness', State.brightness);
-      this.halo.setGlobalParam('wobble', State.wobble);
+          halo.setGlobalParam('size', Random.float(0.2, 0.7));
+          halo.setGlobalParam('color', Random.float());
+          halo.setGlobalParam('colorCenter', State.colorCenter);
+          halo.setGlobalParam('colorCenterRatio', State.colorCenterRatio);
+          halo.setGlobalParam('complexity', Random.float(0.2, 0.7));
+          halo.setGlobalParam('speed', State.speed);
+          halo.setGlobalParam('brightness', State.brightness);
+          halo.setGlobalParam('wobble', State.wobble);
+          halo.showLabels = opts.showLabels;
+
+          State.halos.push(halo);
+      }
+
+      State.halo = State.halos[0];
+      this.halo = State.halos[0];
 
       this.initGUI();
 
@@ -119,7 +130,7 @@ function HaloInitialize(userOpts) {
       }.bind(this))
 
       State.camera = new Camera(opts.scale, this.width / this.height);
-      State.camera2D = new Camera2D(0, 0, this.width, this.height);
+      State.camera2D = new Camera2D(0, 0, this.width/3, this.height/2);
       State.arcball = new Arcball(this, State.camera);
       State.arcball.setPosition(new Vec3(0,3,0));
 
@@ -177,16 +188,42 @@ function HaloInitialize(userOpts) {
         }
       }.bind(this));
     },
+    drawHalo: function() {
+        if (State.halos && State.halos.length == 6) {
+            var W = this.width;
+            var H = this.height;
+            var gl = this.gl;
+            State.camera.setAspectRatio((W/3)/(H/2));
+            State.camera2D.setAspectRatio((W/3)/(H/2));
+
+            gl.viewport(0, 0, W/3, H/2);
+            State.halos[0].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(W/3, 0, W/3, H/2);
+            State.halos[1].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(W*2/3, 0, W/3, H/2);
+            State.halos[2].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(0, H/2, W/3, H/2);
+            State.halos[3].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(W/3, H/2, W/3, H/2);
+            State.halos[4].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(W*2/3, H/2, W/3, H/2);
+            State.halos[5].draw(State.camera, State.camera2D, W/3, H/2);
+            gl.viewport(0, 0, W, H);
+        }
+        else {
+            this.halo.draw(State.camera, State.camera2D, this.width, this.height);
+        }
+    },
     drawScene: function() {
       this.gl.lineWidth(2);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.draw(State.camera, State.camera2D, this.width, this.height);
+      this.drawHalo();
       glu.enableBlending(false);
     },
     drawSceneGlow: function() {
       this.gl.lineWidth(3);
       glu.clearColorAndDepth(Color.Black);
-      this.halo.drawSolid(State.camera, State.camera2D, this.width, this.height);
+      this.drawHalo();
       glu.enableBlending(false);
     },
     draw: function() {
@@ -202,7 +239,15 @@ function HaloInitialize(userOpts) {
       if (State.debug) { this.gl.finish(); console.time('frame'); }
 
       if (State.debug) { this.gl.finish(); console.time('update'); }
-      this.halo.update();
+
+      if (State.halos) {
+          State.halos.forEach(function(halo) {
+              halo.update();
+          });
+      }
+      else {
+          this.halo.update();
+      }
       if (State.debug) { this.gl.finish(); console.timeEnd('update'); }
 
       if (State.debug) { this.gl.finish(); console.time('halo'); }
@@ -253,4 +298,3 @@ else {
     wobble: 0.1
   })
 }
-
