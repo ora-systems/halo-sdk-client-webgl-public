@@ -12,6 +12,7 @@ var GUI           = require('pex-gui').GUI;
 var fx            = require('fx');
 var Halo          = require('ora-halo');
 var Texture2D     = require('pex-glu').Texture2D;
+var isBrowser     = require('is-browser');
 
 var ASSETS_PATH = Platform.isPlask ? '../assets' : '/assets';
 
@@ -59,11 +60,11 @@ function HaloAddTimeStamp(params) {
 }
 
 function HaloInitialize(userOpts) {
+    console.log(userOpts)
   opts = {
     width: 1280,
     height: 720,
-    scale: 60,
-    gradient: '/textures/calories-gradient.png'
+    scale: 60
   };
   for (var p in userOpts) {
     if (userOpts.hasOwnProperty(p)) {
@@ -85,10 +86,10 @@ function HaloInitialize(userOpts) {
     },
     init: function() {
       State.halo = this.halo = new Halo({
-        lineDotsTexture: ASSETS_PATH + '/textures/line-dots.png',
-        lineSolidTexture: ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: ASSETS_PATH + opts.gradient,
-        gridColorTexture: ASSETS_PATH + '/textures/line-solid.png',
+        lineDotsTexture: isBrowser ? require('../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
+        lineSolidTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
+        colorTexture: isBrowser ? require('../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
+        gridColorTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
       this.halo.setGlobalParam('size', State.size);
@@ -153,14 +154,8 @@ function HaloInitialize(userOpts) {
        this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
         this.halo.setGlobalParam('wobble', value);
       }.bind(this));
-      this.colorTexturePaths = [
-       ASSETS_PATH + '/textures/calories-gradient.png',
-       ASSETS_PATH + '/textures/halo-gradient-continuous.png',
-       ASSETS_PATH + '/textures/halo-gradient.png'
-      ]
-      this.colorTextures = this.colorTexturePaths.map(function(path) {
-        return Texture2D.load(path);
-      });
+
+      this.colorTextures = [ State.halo.colorTexture ];
 
       this.gui.addTextureList('Color textures', State, 'colorTextureIndex', this.colorTextures.map(function(tex, index) {
         return { 'name': index, texture: tex, value: index }
@@ -253,4 +248,3 @@ else {
     wobble: 0.1
   })
 }
-
