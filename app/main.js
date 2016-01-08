@@ -151,8 +151,11 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
         this.halo.setGlobalParam('brightness', value);
       }.bind(this));
-       this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
+      this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
         this.halo.setGlobalParam('wobble', value);
+      }.bind(this));
+      this.gui.addParam('Background', this.halo, 'background', {}, function(value) {
+        this.halo.background.a = 0;
       }.bind(this));
 
       this.colorTextures = [ State.halo.colorTexture ];
@@ -174,20 +177,20 @@ function HaloInitialize(userOpts) {
     },
     drawScene: function() {
       this.gl.lineWidth(2);
-      glu.clearColorAndDepth(Color.Black);
+      glu.clearColorAndDepth(this.halo.background);
       this.halo.draw(State.camera, State.camera2D, this.width, this.height);
       glu.enableBlending(false);
     },
     drawSceneGlow: function() {
       this.gl.lineWidth(3);
-      glu.clearColorAndDepth(Color.Black);
+      glu.clearColorAndDepth(this.halo.background);
       this.halo.drawSolid(State.camera, State.camera2D, this.width, this.height);
       glu.enableBlending(false);
     },
     draw: function() {
       Time.verbose = true
-      glu.clearColorAndDepth(Color.Black);
-      glu.enableDepthReadAndWrite(true);
+      glu.clearColorAndDepth(this.halo.background);
+      glu.enableDepthReadAndWrite(false);
 
       var W = this.width;
       var H = this.height;
@@ -206,6 +209,7 @@ function HaloInitialize(userOpts) {
       if (State.debug) { this.gl.finish(); console.timeEnd('halo'); }
 
       if (State.debug) { this.gl.finish(); console.time('fx'); }
+      glu.enableAlphaBlending(false);
       glow = color
         .render({ drawFunc: this.drawSceneGlow.bind(this)})
         .downsample4()
@@ -214,7 +218,10 @@ function HaloInitialize(userOpts) {
         .blur5();
       var final = color
         .add(glow, { scale: 0.75});
-      final.blit({ width: W, height: H });
+      glu.enableAlphaBlending(true);
+      //final.blit({ width: W, height: H });
+      color.blit({ width: W, height: H });
+      glow.blit({ width: W, height: H });
       if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
 
       if (State.debug) { this.gl.finish(); console.time('gui'); }
