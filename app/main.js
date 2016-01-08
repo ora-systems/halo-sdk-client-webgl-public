@@ -127,9 +127,12 @@ function HaloInitialize(userOpts) {
 
       this.initUrlParams();
 
+      this.halo.setGlobalParam('growth', 0.5);
+
       this.framerate(60);
     },
     initUrlParams: function() {
+        if (Platform.isPlask) return;
         var url = parse(document.location.href, true);
         if (url.query.background) {
             var color = Color.fromHex('#'+url.query.background);
@@ -139,6 +142,10 @@ function HaloInitialize(userOpts) {
         if (url.query.scale) {
             var scale = Number(url.query.scale);
             State.camera.setFov(scale);
+        }
+        if (url.query.growth) {
+            var growth = Number(url.query.growth);
+            this.halo.setGlobalParam('growth', growth);
         }
     },
     initGUI: function() {
