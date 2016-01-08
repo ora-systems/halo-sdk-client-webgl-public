@@ -189,8 +189,9 @@ function HaloInitialize(userOpts) {
     },
     draw: function() {
       Time.verbose = true
-      glu.clearColorAndDepth(this.halo.background);
-      glu.enableDepthReadAndWrite(false);
+      glu.clearColorAndDepth(Color.Black);
+      glu.clearColorAndDepth(new Color(this.halo.background.r, this.halo.background.g, this.halo.background.b, 1.0));
+      glu.enableDepthReadAndWrite(true);
 
       var W = this.width;
       var H = this.height;
