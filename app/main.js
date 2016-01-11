@@ -33,7 +33,6 @@ var State = {
   debug: true,
   growth: 0.01,
   background: new Color(0,0,0,1),
-  grid: new Color(0,0,0,1),
   glow: 0.75,
   growth: 0.05
 }
@@ -166,9 +165,6 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global background', State, 'background', {}, function(value) {
         this.halo.setGlobalParam('background', value);
       }.bind(this));
-      this.gui.addParam('Global grid', State, 'grid', {}, function(value) {
-        this.halo.setGlobalParam('grid', value);
-      }.bind(this));
       this.gui.addParam('Global glow', State, 'glow', {}, function(value) {
         this.halo.setGlobalParam('glow', value);
       }.bind(this));
@@ -176,13 +172,8 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('growth', value);
       }.bind(this));
 
-      this.colorTextures = [ State.halo.colorTexture ];
-
-      this.gui.addTextureList('Color textures', State, 'colorTextureIndex', this.colorTextures.map(function(tex, index) {
-        return { 'name': index, texture: tex, value: index }
-      }), 3, function(index) {
-        this.halo.setColorTexture(this.colorTexturePaths[index])
-      }.bind(this))
+      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+      this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
       this.on('keyDown', function(e) {
         if (e.str == 'G') {
@@ -275,6 +266,7 @@ else {
     brightness: 1,
     wobble: 0.1,
     background: '000000',
-    growth: 0.05
+    growth: 0.05,
+    spectrum: ['FF0000', '00FF00', '0000FF']
   })
 }
