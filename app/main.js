@@ -14,7 +14,6 @@ var fx            = require('fx');
 var Halo          = require('ora-halo');
 var Texture2D     = require('pex-glu').Texture2D;
 var isBrowser     = require('is-browser');
-var parse         = require('url-parse');
 
 var ASSETS_PATH = Platform.isPlask ? '../assets' : '/assets';
 
@@ -134,28 +133,7 @@ function HaloInitialize(userOpts) {
       State.arcball = new Arcball(this, State.camera);
       State.arcball.setPosition(new Vec3(0,3,0));
 
-      this.initUrlParams();
-
-      this.halo.setGlobalParam('growth', 0.5);
-
       this.framerate(60);
-    },
-    initUrlParams: function() {
-        if (Platform.isPlask) return;
-        var url = parse(document.location.href, true);
-        if (url.query.background) {
-            var color = Color.fromHex('#'+url.query.background);
-            color.a = 0;
-            this.halo.setGlobalParam('background', color);
-        }
-        if (url.query.scale) {
-            var scale = Number(url.query.scale);
-            State.camera.setFov(scale);
-        }
-        if (url.query.growth) {
-            var growth = Number(url.query.growth);
-            this.halo.setGlobalParam('growth', growth);
-        }
     },
     initGUI: function() {
       this.gui = new GUI(this);
