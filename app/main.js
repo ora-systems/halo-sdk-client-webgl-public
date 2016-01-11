@@ -8,6 +8,7 @@ var glu           = require('pex-glu');
 var Camera        = require('pex-glu').PerspectiveCamera;
 var Camera2D      = require('pex-glu').OrthographicCamera;
 var Arcball       = require('pex-glu').Arcball;
+var Context       = require('pex-glu').Context;
 var GUI           = require('pex-gui').GUI;
 var fx            = require('fx');
 var Halo          = require('ora-halo');
@@ -30,7 +31,12 @@ var State = {
   speed: 0.5,
   colorTextureIndex: 0,
   wobble: 0,
-  debug: true
+  debug: true,
+  growth: 0.01,
+  background: new Color(0,0,0,1),
+  grid: new Color(0,0,0,1),
+  glow: 0.75,
+  growth: 0.05
 }
 
 function HaloSetMode(mode) {
@@ -61,7 +67,7 @@ function HaloAddTimeStamp(params) {
 }
 
 function HaloInitialize(userOpts) {
-  console.log(userOpts)
+  console.log('HaloInitialize', userOpts)
   opts = {
     width: 1280,
     height: 720,
@@ -101,6 +107,9 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('speed', State.speed);
       this.halo.setGlobalParam('brightness', State.brightness);
       this.halo.setGlobalParam('wobble', State.wobble);
+      this.halo.setGlobalParam('background', State.background);
+      this.halo.setGlobalParam('growth', State.growth);
+      this.halo.setGlobalParam('glow', State.glow);
 
       this.initGUI();
 
@@ -176,8 +185,17 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
         this.halo.setGlobalParam('wobble', value);
       }.bind(this));
-      this.gui.addParam('Background', this.halo, 'background', {}, function(value) {
-        this.halo.background.a = 0;
+      this.gui.addParam('Global background', State, 'background', {}, function(value) {
+        this.halo.setGlobalParam('background', value);
+      }.bind(this));
+      this.gui.addParam('Global grid', State, 'grid', {}, function(value) {
+        this.halo.setGlobalParam('grid', value);
+      }.bind(this));
+      this.gui.addParam('Global glow', State, 'glow', {}, function(value) {
+        this.halo.setGlobalParam('glow', value);
+      }.bind(this));
+      this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
+        this.halo.setGlobalParam('growth', value);
       }.bind(this));
 
       this.colorTextures = [ State.halo.colorTexture ];
@@ -240,11 +258,13 @@ function HaloInitialize(userOpts) {
         .blur5()
         .blur5();
       var final = color
-        .add(glow, { scale: 0.75});
+        .add(glow, { scale: this.halo.glow});
+
+
+      var gl = Context.currentContext;
+      glu.clearColor(new Color(this.halo.background.r, this.halo.background.g, this.halo.background.b, 1))
       glu.enableAlphaBlending(true);
-      //final.blit({ width: W, height: H });
-      color.blit({ width: W, height: H });
-      glow.blit({ width: W, height: H });
+      final.blit({ width: W, height: H });
       if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
 
       if (State.debug) { this.gl.finish(); console.time('gui'); }
@@ -275,6 +295,8 @@ else {
     complexity: 0.6,
     speed: 0.5,
     brightness: 1,
-    wobble: 0.1
+    wobble: 0.1,
+    background: '000000',
+    growth: 0.05
   })
 }
