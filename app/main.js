@@ -44,7 +44,13 @@ function HaloSetMode(mode) {
 
 function HaloSetGlobalParam(name, value) {
   if (!State.halo) return;
-  State.halo.setGlobalParam(name, value);
+
+  if (name == 'scale') {
+      State.camera.setFov(value);
+  }
+  else {
+      State.halo.setGlobalParam(name, value);
+  }
 }
 
 function HaloSetGlobalParams(params) {
