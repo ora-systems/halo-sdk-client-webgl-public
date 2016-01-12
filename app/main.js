@@ -265,14 +265,15 @@ else {
   HaloInitialize();
   HaloSetMode('present')
   HaloSetGlobalParams({
-    size: 0.6,
-    color: 0.05,
-    complexity: 0.6,
+    size: 1,
+    color: 0.67,
+    complexity: 0.05,
     speed: 0.5,
     brightness: 1,
     wobble: 0.1,
     background: '000000',
     growth: 0.05,
-    spectrum: ['FF0000', '00FF00', '0000FF']
+    scale: 120
+    //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 }
