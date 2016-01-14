@@ -270,7 +270,7 @@ else {
   HaloSetGlobalParams({
     size: 1,
     color: 0.67,
-    complexity: 0.05,
+    complexity: 0.7,
     speed: 0.5,
     brightness: 1,
     wobble: 0.1,
