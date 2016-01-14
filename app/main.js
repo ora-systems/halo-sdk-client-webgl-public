@@ -235,10 +235,13 @@ function HaloInitialize(userOpts) {
       var final = color
         .add(glow, { scale: this.halo.glow});
 
-
       var gl = Context.currentContext;
+      var blackBackground = ((this.halo.background.r + this.halo.background.g + this.halo.background.b) == 0);
+
       glu.clearColor(new Color(this.halo.background.r, this.halo.background.g, this.halo.background.b, 1))
-      glu.enableAlphaBlending(true);
+      if (!blackBackground) {
+        glu.enableAlphaBlending(true);
+      }
       final.blit({ width: W, height: H });
       if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
 
