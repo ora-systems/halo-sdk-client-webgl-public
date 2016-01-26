@@ -10,6 +10,7 @@ var GUI           = require('pex-gui');
 var Halo          = require('ora-halo');
 var isBrowser     = require('is-browser');
 var isiOS         = require('is-ios');
+var urify         = require('urify');
 
 var ASSETS_PATH = isBrowser ? '/assets' : __dirname + '/../assets';
 
@@ -97,10 +98,10 @@ function HaloInitialize(userOpts) {
       var height = this.getHeight();
 
       State.halo = this.halo = new Halo(ctx, this, {
-        lineDotsTexture: isBrowser ? require('../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
-        lineSolidTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: isBrowser ? require('../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
-        gridColorTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
+        lineDotsTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
+        lineSolidTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
+        colorTexture: isBrowser ? urify(__dirname + '/../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
+        gridColorTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
       this.halo.setGlobalParam('size', State.size);
@@ -185,6 +186,8 @@ function HaloInitialize(userOpts) {
       }.bind(this));
 
 
+      this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
+      this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
       this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
       this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);

@@ -21,10 +21,11 @@
     "pex-sys": "^1.0.0-beta.5",
     "primitive-cube": "^1.0.2",
     "ramda": "^0.19.1",
-    "re-map": "^0.1.1"
+    "re-map": "^0.1.1",
+    "urify": "^2.0.2"
   },
   "scripts": {
-    "start": "beefy main.js:main.web.js --open -- -i plask -g glslify-promise/transform",
-    "build": "browserify main.js -i plask -g glslify-promise/transform -o main.web.js"
+    "start": "beefy main.js:main.web.js --open -- -i plask -t urify/transform -g ./app/node_modules/glslify-sync/transform",
+    "build": "browserify app/main.js -i plask -t urify/transform -g ./app/node_modules/glslify-sync/transform -o main.web.js"
   }
 }
