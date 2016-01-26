@@ -18,14 +18,14 @@
     "pex-gui": "^1.0.0-beta.1",
     "pex-io": "^1.0.0-beta.1",
     "pex-math": "^1.0.0-beta.1",
-    "pex-sys": "^1.0.0-beta.5",
+    "pex-sys": "^1.0.0-beta.6",
     "primitive-cube": "^1.0.2",
     "ramda": "^0.19.1",
     "re-map": "^0.1.1",
     "urify": "^2.0.2"
   },
   "scripts": {
-    "start": "beefy main.js:main.web.js --open -- -i plask -t urify/transform -g ./app/node_modules/glslify-sync/transform",
+    "start": "beefy app/main.js:main.web.js --open -- -i plask -t urify/transform -g ./app/node_modules/glslify-sync/transform",
     "build": "browserify app/main.js -i plask -t urify/transform -g ./app/node_modules/glslify-sync/transform -o main.web.js"
   }
 }
