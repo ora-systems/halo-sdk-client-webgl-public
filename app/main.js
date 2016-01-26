@@ -226,7 +226,11 @@ function HaloInitialize(userOpts) {
       var ctx = this.getContext();
       //TODO: glu.clearColorAndDepth(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
       //TODO: glu.enableDepthReadAndWrite(true);
-      //
+
+      //Workaround for texture loading bug
+      if (this.getTime().getElapsedFrames() < 5) {
+          return;
+      }
 
 
       var W = this.getWidth();
@@ -234,7 +238,6 @@ function HaloInitialize(userOpts) {
 
       State.arcball.apply()
 
-      if (this.getTime().getElapsedFrames() < 3) return;
       this.halo.update();
 
       this.drawScene(); //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
