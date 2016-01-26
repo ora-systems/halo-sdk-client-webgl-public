@@ -11,7 +11,7 @@ var Halo          = require('ora-halo');
 var isBrowser     = require('is-browser');
 var isiOS         = require('is-ios');
 
-var ASSETS_PATH = isBrowser ? '/assets' : '../assets';
+var ASSETS_PATH = isBrowser ? '/assets' : __dirname + '/../assets';
 
 var State = {
   halo: null,
@@ -146,6 +146,8 @@ function HaloInitialize(userOpts) {
     },
     initGUI: function() {
       this.gui = new GUI(this.getContext(), this.getWidth(), this.getHeight());
+      this.addEventListener(this.gui);
+
       if (isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
       else if (isiOS) this.gui.toggleEnabled();
       this.gui.addParam('Global size', State, 'size', {}, function(value) {
@@ -182,12 +184,14 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('growth', value);
       }.bind(this));
 
-      //TODO: this.gui.addTexture2D('Color texture', this.halo.colorTexture);
-      //TODO: this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
+
+      this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
+      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+      this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
     },
     onKeyDown: function(e) {
         if (e.str == 'G') {
-          //TODO: this.gui.toggleEnabled();
+          //TODO: e.str is broken, this.gui.toggleEnabled();
         }
         if (e.str == 'd') {
           State.debug = true;
@@ -222,8 +226,6 @@ function HaloInitialize(userOpts) {
 
       var W = this.getWidth();
       var H = this.getHeight();
-
-      if (State.debug) { console.log('---') }
 
       State.arcball.apply()
 
