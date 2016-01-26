@@ -87,9 +87,8 @@ function HaloInitialize(userOpts) {
     settings: {
       width: opts.width,
       height: opts.height,
-      type: '3d',
       canvas: isBrowser ? document.getElementById('haloCanvas') : null,
-      fullscreen: opts.fullscreen,
+      fullScreen: opts.fullscreen,
       highdpi: isiOS ? 2 : 1
     },
     init: function() {
