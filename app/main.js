@@ -119,24 +119,30 @@ function HaloInitialize(userOpts) {
 
       //TODO: if (isiOS) {
       //  this.on('mouseDragged', function(e) {
-      //    if (e.y > this.height * 0.8) {
+      //    if (e.y > this.getHeight() * 0.8) {
       //      e.handled = true;
-      //      this.halo.setGlobalParam('complexity', e.x / this.width);
-      //      this.halo.setGlobalParam('color', e.x / this.width * 0.9);
-      //      this.halo.setGlobalParam('size', e.x / this.width);
+      //      this.halo.setGlobalParam('complexity', e.x / this.getWidth());
+      //      this.halo.setGlobalParam('color', e.x / this.getWidth() * 0.9);
+      //      this.halo.setGlobalParam('size', e.x / this.getWidth());
       //    }
       //  }.bind(this));
       //}
 
-      State.camera = new Camera(opts.scale, width / height);
+      var fov = opts.scale;
+
+      State.camera = new Camera(fov, width / height);
       State.camera.setPosition([0,3,0]); //TODO: State.arcball.setPosition([0,3,0]);
+      State.camera.setUp([0,0,1]); //TODO: State.arcball.setPosition([0,3,0]);
       State.camera2D = new Camera2D(0, 0, width, height);
       State.arcball = new Arcball(State.camera, width, height);
+
+      ctx.setProjectionMatrix(State.camera.getProjectionMatrix());
+      ctx.setViewMatrix(State.camera.getViewMatrix())
       this.addEventListener(State.arcball);
     },
     onWindowResize: function() {
-        State.camera.setAspectRatio(this.width/this.height);
-        this.ctx.viewport(0, 0, this.width, this.height);
+        State.camera.setAspectRatio(this.getWidth()/this.getHeight());
+        this.ctx.viewport(0, 0, this.getWidth(), this.getHeight());
     },
     initGUI: function() {
       this.gui = new GUI(this.getContext(), this.getWidth(), this.getHeight());
@@ -188,29 +194,42 @@ function HaloInitialize(userOpts) {
         }
     },
     drawScene: function() {
-      this.gl.lineWidth(2);
-      glu.clearColorAndDepth(this.halo.background);
-      this.halo.draw(State.camera, State.camera2D, this.width, this.height);
-      glu.enableBlending(false);
+      var ctx = this.getContext();
+      ctx.pushViewMatrix();
+      ctx.setViewMatrix(State.camera.getViewMatrix())
+      ctx.setLineWidth(2);
+      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
+      ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+      this.halo.draw(State.camera, State.camera2D, this.getWidth(), this.getHeight());
+      ctx.setBlend(false);
+      ctx.popViewMatrix();
     },
     drawSceneGlow: function() {
-      this.gl.lineWidth(3);
-      glu.clearColorAndDepth(this.halo.background);
-      this.halo.drawSolid(State.camera, State.camera2D, this.width, this.height);
-      glu.enableBlending(false);
+      var ctx = this.getContext();
+      ctx.pushViewMatrix();
+      ctx.setViewMatrix(State.camera.getViewMatrix())
+      ctx.setLineWidth(3);
+      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
+      ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+      this.halo.drawSolid(State.camera, State.camera2D, this.getWidth(), this.getHeight());
+      ctx.setBlend(false);
+      ctx.popViewMatrix();
     },
     draw: function() {
       var ctx = this.getContext();
       //TODO: glu.clearColorAndDepth(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
       //TODO: glu.enableDepthReadAndWrite(true);
 
-      var W = this.width;
-      var H = this.height;
+      var W = this.getWidth();
+      var H = this.getHeight();
 
       if (State.debug) { console.log('---') }
 
+      State.arcball.apply()
+
       this.halo.update();
-      //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
+
+      this.drawScene(); //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
       //TODO: glu.enableAlphaBlending(false);
       //glow = color
         //.render({ drawFunc: this.drawSceneGlow.bind(this)})
@@ -228,6 +247,7 @@ function HaloInitialize(userOpts) {
         //TODO: glu.enableAlphaBlending(true);
       //}
       //TODO: final.blit({ width: W, height: H });
+      //
 
       this.gui.draw();
     }
