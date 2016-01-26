@@ -115,7 +115,7 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('growth', State.growth);
       this.halo.setGlobalParam('glow', State.glow);
 
-      this.initGUI();
+      //this.initGUI();
 
       //TODO: if (isiOS) {
       //  this.on('mouseDragged', function(e) {
@@ -150,6 +150,7 @@ function HaloInitialize(userOpts) {
 
       if (isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
       else if (isiOS) this.gui.toggleEnabled();
+
       this.gui.addParam('Global size', State, 'size', {}, function(value) {
         this.halo.setGlobalParam('size', value);
       }.bind(this));
@@ -225,12 +226,15 @@ function HaloInitialize(userOpts) {
       var ctx = this.getContext();
       //TODO: glu.clearColorAndDepth(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
       //TODO: glu.enableDepthReadAndWrite(true);
+      //
+
 
       var W = this.getWidth();
       var H = this.getHeight();
 
       State.arcball.apply()
 
+      if (this.getTime().getElapsedFrames() < 3) return;
       this.halo.update();
 
       this.drawScene(); //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
@@ -245,15 +249,13 @@ function HaloInitialize(userOpts) {
         //.add(glow, { scale: this.halo.glow});
 
       var blackBackground = ((this.halo.background[0] + this.halo.background[1] + this.halo.background[2]) == 0);
-
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1)
       //TODO: if (!blackBackground) {
         //TODO: glu.enableAlphaBlending(true);
       //}
       //TODO: final.blit({ width: W, height: H });
-      //
 
-      this.gui.draw();
+      if (this.gui) this.gui.draw();
     }
   });
 }
