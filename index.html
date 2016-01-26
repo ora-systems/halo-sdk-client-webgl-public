@@ -3,10 +3,24 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta charset="UTF-8">
-<title></title>
-<canvas id="haloCanvas" width="800" height="600"></canvas>
+<title>Halo</title>
 <script src="main.web.js"></script>
+</head>
+<body style="margin:0">
+<canvas id="haloCanvas" width="800" height="600"></canvas>
 <script>
+
+function splitter(c) {
+    return function(str) {
+        return str.split(c);
+    }
+}
+
+var paramList = document.location.search.replace('?', '').split('&').map(splitter('='));
+var params = paramList.reduce(function(params, param) {
+    params[param[0]] = param[1];
+    return params;
+}, {})
 
 //scenario A
 HaloInitialize({
@@ -16,58 +30,17 @@ HaloInitialize({
 });
 HaloSetMode('present');
 HaloSetGlobalParams({
-    size: 1,              /* 0.0 - 1.0 */
-    color: 0.67,            /* 0.0 - 1.0 */
-    complexity: 0.7,        /* 0.0 - 1.0 */
-    speed: 0.5,             /* 0.0 - 1.0 */
-    brightness: 1,          /* 0.0 - 1.0 */
-    wobble: 0.1,            /* 0.0 - 1.0 */
+    size: params.size || 1,              /* 0.0 - 1.0 */
+    color: params.color || 0.67,            /* 0.0 - 1.0 */
+    complexity: params.complexity || 0.7,        /* 0.0 - 1.0 */
+    speed: params.speed || 0.5,             /* 0.0 - 1.0 */
+    brightness: params.brightness || 1,          /* 0.0 - 1.0 */
+    wobble: params.wobble || 0.1,            /* 0.0 - 1.0 */
     growth: 0.05,           /* 0.01 - 0.5 */
     glow: 0.75,             /* 0.0 - 1.0 */
     background: '000000'    /* RRGGBB */,
     scale: 120
-    //spectrum: ['FFFFFF', 'FF9900', 'FF0000'] /* list of RRGGBB colors */
-  })
-
-/*
-setInterval(function() {
-  //you can do it one by one or all at once
-  //HaloSetGlobalParams('size', 0.5);
-  HaloSetGlobalParams({
-    size: 0.2 + 0.8 * Math.random(),
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random(),
-    brightness: 0.2 + 0.8 * Math.random(),
-    wobble: 0.2 + 0.8 * Math.random()
-  })
-}, 2000)
-*/
-
-//scenario B
-/*
-HaloInitialize();
-HaloSetMode('timeline')
-HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
-
-for(var i=0; i<24; i++) {
-  HaloAddTimeStamp({
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random()
-  })
-}
-
-setInterval(function() {
-  HaloAddTimeStamp({
-    color: 0.2 + 0.8 * Math.random(),
-    complexity: 0.2 + 0.8 * Math.random(),
-    speed: 0.2 + 0.8 * Math.random()
-  })
-}, 500)
-*/
+})
 </script>
-</head>
-<body>
 </body>
 </html>
