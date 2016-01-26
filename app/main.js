@@ -204,6 +204,7 @@ function HaloInitialize(userOpts) {
       var ctx = this.getContext();
       ctx.pushViewMatrix();
       ctx.setViewMatrix(State.camera.getViewMatrix())
+      ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
       ctx.setLineWidth(2);
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
       ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
@@ -214,6 +215,7 @@ function HaloInitialize(userOpts) {
     drawSceneGlow: function() {
       var ctx = this.getContext();
       ctx.pushViewMatrix();
+      ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
       ctx.setViewMatrix(State.camera.getViewMatrix())
       ctx.setLineWidth(3);
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
