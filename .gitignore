@@ -1,5 +1,6 @@
 /node_modules
 !app/node_modules
+app/node_modules/glslify-sync/node_modules
 stuff
 main.web.js
 assets/.DS_Store

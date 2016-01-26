@@ -1,21 +1,17 @@
-var Platform      = require('pex-sys').Platform;
-var Time          = require('pex-sys').Time;
-var Window        = require('pex-sys').Window;
-var Color         = require('pex-color').Color;
-var Vec3          = require('pex-geom').Vec3;
-var Vec2          = require('pex-geom').Vec2;
-var glu           = require('pex-glu');
-var Camera        = require('pex-glu').PerspectiveCamera;
-var Camera2D      = require('pex-glu').OrthographicCamera;
-var Arcball       = require('pex-glu').Arcball;
-var Context       = require('pex-glu').Context;
-var GUI           = require('pex-gui').GUI;
-var fx            = require('fx');
+var Window        = require('pex-sys/Window');
+var Color         = require('pex-color');
+var Vec3          = require('pex-math/Vec3');
+var Vec2          = require('pex-math/Vec2');
+var Camera        = require('pex-cam').PerspCamera;
+var Camera2D      = require('pex-cam').OrthoCamera;
+var Arcball       = require('pex-cam').Arcball;
+var GUI           = require('pex-gui');
+//var fx            = require('fx'); //TODO:fx
 var Halo          = require('ora-halo');
-var Texture2D     = require('pex-glu').Texture2D;
 var isBrowser     = require('is-browser');
+var isiOS         = require('is-ios');
 
-var ASSETS_PATH = Platform.isPlask ? '../assets' : '/assets';
+var ASSETS_PATH = isBrowser ? '/assets' : '../assets';
 
 var State = {
   halo: null,
@@ -32,7 +28,7 @@ var State = {
   wobble: 0,
   debug: true,
   growth: 0.01,
-  background: new Color(0,0,0,1),
+  background: [0,0,0,1],
   glow: 0.75,
   growth: 0.05
 }
@@ -62,7 +58,7 @@ function HaloSetGlobalParams(params) {
 
 function HaloResetCamera(mode) {
   if (!State.arcball) return;
-  State.arcball.setPosition(new Vec3(1,1,1))
+  State.arcball.setPosition([1,1,1])
 }
 
 function HaloAddTimeStamp(params) {
@@ -91,12 +87,16 @@ function HaloInitialize(userOpts) {
       width: opts.width,
       height: opts.height,
       type: '3d',
-      canvas: Platform.isBrowser ? document.getElementById('haloCanvas') : null,
+      canvas: isBrowser ? document.getElementById('haloCanvas') : null,
       fullscreen: opts.fullscreen,
-      highdpi: Platform.isiOS ? 2 : 1
+      highdpi: isiOS ? 2 : 1
     },
     init: function() {
-      State.halo = this.halo = new Halo({
+      var ctx = this.getContext();
+      var width = this.getWidth();
+      var height = this.getHeight();
+
+      State.halo = this.halo = new Halo(ctx, this, {
         lineDotsTexture: isBrowser ? require('../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
         lineSolidTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
         colorTexture: isBrowser ? require('../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
@@ -117,33 +117,31 @@ function HaloInitialize(userOpts) {
 
       this.initGUI();
 
-      if (Platform.isiOS) {
-        this.on('mouseDragged', function(e) {
-          if (e.y > this.height * 0.8) {
-            e.handled = true;
-            this.halo.setGlobalParam('complexity', e.x / this.width);
-            this.halo.setGlobalParam('color', e.x / this.width * 0.9);
-            this.halo.setGlobalParam('size', e.x / this.width);
-          }
-        }.bind(this));
-      }
+      //TODO: if (isiOS) {
+      //  this.on('mouseDragged', function(e) {
+      //    if (e.y > this.height * 0.8) {
+      //      e.handled = true;
+      //      this.halo.setGlobalParam('complexity', e.x / this.width);
+      //      this.halo.setGlobalParam('color', e.x / this.width * 0.9);
+      //      this.halo.setGlobalParam('size', e.x / this.width);
+      //    }
+      //  }.bind(this));
+      //}
 
-      this.on('resize', function() {
+      State.camera = new Camera(opts.scale, width / height);
+      State.camera.setPosition([0,3,0]); //TODO: State.arcball.setPosition([0,3,0]);
+      State.camera2D = new Camera2D(0, 0, width, height);
+      State.arcball = new Arcball(State.camera, width, height);
+      this.addEventListener(State.arcball);
+    },
+    onWindowResize: function() {
         State.camera.setAspectRatio(this.width/this.height);
-        this.gl.viewport(0, 0, this.width, this.height);
-      }.bind(this))
-
-      State.camera = new Camera(opts.scale, this.width / this.height);
-      State.camera2D = new Camera2D(0, 0, this.width, this.height);
-      State.arcball = new Arcball(this, State.camera);
-      State.arcball.setPosition(new Vec3(0,3,0));
-
-      this.framerate(60);
+        this.ctx.viewport(0, 0, this.width, this.height);
     },
     initGUI: function() {
-      this.gui = new GUI(this);
-      if (Platform.isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
-      else if (Platform.isiOS) this.gui.toggleEnabled();
+      this.gui = new GUI(this.getContext(), this.getWidth(), this.getHeight());
+      if (isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
+      else if (isiOS) this.gui.toggleEnabled();
       this.gui.addParam('Global size', State, 'size', {}, function(value) {
         this.halo.setGlobalParam('size', value);
       }.bind(this));
@@ -178,17 +176,16 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('growth', value);
       }.bind(this));
 
-      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
-      this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
-
-      this.on('keyDown', function(e) {
+      //TODO: this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+      //TODO: this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
+    },
+    onKeyDown: function(e) {
         if (e.str == 'G') {
-          this.gui.toggleEnabled();
+          //TODO: this.gui.toggleEnabled();
         }
         if (e.str == 'd') {
           State.debug = true;
         }
-      }.bind(this));
     },
     drawScene: function() {
       this.gl.lineWidth(2);
@@ -203,60 +200,41 @@ function HaloInitialize(userOpts) {
       glu.enableBlending(false);
     },
     draw: function() {
-      Time.verbose = true
-      glu.clearColorAndDepth(Color.Black);
-      glu.clearColorAndDepth(new Color(this.halo.background.r, this.halo.background.g, this.halo.background.b, 1.0));
-      glu.enableDepthReadAndWrite(true);
+      var ctx = this.getContext();
+      //TODO: glu.clearColorAndDepth(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
+      //TODO: glu.enableDepthReadAndWrite(true);
 
       var W = this.width;
       var H = this.height;
 
       if (State.debug) { console.log('---') }
 
-      if (State.debug) { this.gl.finish(); console.time('frame'); }
-
-      if (State.debug) { this.gl.finish(); console.time('update'); }
       this.halo.update();
-      if (State.debug) { this.gl.finish(); console.timeEnd('update'); }
+      //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
+      //TODO: glu.enableAlphaBlending(false);
+      //glow = color
+        //.render({ drawFunc: this.drawSceneGlow.bind(this)})
+        //.downsample4()
+        //.downsample2()
+        //.blur5()
+        //.blur5();
+      //var final = color
+        //.add(glow, { scale: this.halo.glow});
 
-      if (State.debug) { this.gl.finish(); console.time('halo'); }
-      var color = fx()
-        .render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
-      if (State.debug) { this.gl.finish(); console.timeEnd('halo'); }
+      var blackBackground = ((this.halo.background[0] + this.halo.background[1] + this.halo.background[2]) == 0);
 
-      if (State.debug) { this.gl.finish(); console.time('fx'); }
-      glu.enableAlphaBlending(false);
-      glow = color
-        .render({ drawFunc: this.drawSceneGlow.bind(this)})
-        .downsample4()
-        .downsample2()
-        .blur5()
-        .blur5();
-      var final = color
-        .add(glow, { scale: this.halo.glow});
+      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1)
+      //TODO: if (!blackBackground) {
+        //TODO: glu.enableAlphaBlending(true);
+      //}
+      //TODO: final.blit({ width: W, height: H });
 
-      var gl = Context.currentContext;
-      var blackBackground = ((this.halo.background.r + this.halo.background.g + this.halo.background.b) == 0);
-
-      glu.clearColor(new Color(this.halo.background.r, this.halo.background.g, this.halo.background.b, 1))
-      if (!blackBackground) {
-        glu.enableAlphaBlending(true);
-      }
-      final.blit({ width: W, height: H });
-      if (State.debug) { this.gl.finish(); console.timeEnd('fx'); }
-
-      if (State.debug) { this.gl.finish(); console.time('gui'); }
       this.gui.draw();
-      if (State.debug) { this.gl.finish(); console.timeEnd('gui'); }
-
-      if (State.debug) { this.gl.finish(); console.timeEnd('frame'); }
-
-      if (State.debug) { State.debug = false; }
     }
   });
 }
 
-if (Platform.isBrowser) {
+if (isBrowser) {
   window.HaloSetMode = HaloSetMode;
   window.HaloSetGlobalParam = HaloSetGlobalParam;
   window.HaloSetGlobalParams = HaloSetGlobalParams;
