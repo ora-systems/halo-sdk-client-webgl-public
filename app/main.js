@@ -89,7 +89,7 @@ function HaloInitialize(userOpts) {
       height: opts.height,
       canvas: isBrowser ? document.getElementById('haloCanvas') : null,
       fullScreen: opts.fullscreen,
-      highdpi: isiOS ? 2 : 1
+      pixelRatio: isiOS ? 2 : 1
     },
     init: function() {
       var ctx = this.getContext();
@@ -115,7 +115,7 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('growth', State.growth);
       this.halo.setGlobalParam('glow', State.glow);
 
-      //this.initGUI();
+      this.initGUI();
 
       //TODO: if (isiOS) {
       //  this.on('mouseDragged', function(e) {
