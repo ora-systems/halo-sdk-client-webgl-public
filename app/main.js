@@ -366,13 +366,13 @@ else {
     minRingRadius: 0.6,
     showGrid: false,
     solidLines: true,
-    evenLineDistribution: false,
+    evenLineDistribution: true,
     maxNumRings: 30,
-    minRingRadius: 0.4
+    minRingRadius: 0.6
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 
-  for(var i=0; i<30; i++) {
+  for(var i=0; i<10; i++) {
       var special = random.chance(0.2);
       HaloAddTimeStamp({
        color: 0.2 + (special ? random.float(0, 0.8) : 0),
