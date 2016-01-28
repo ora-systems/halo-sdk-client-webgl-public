@@ -229,6 +229,17 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
       }.bind(this));
+      this.gui.addButton('Add few more data points', function() {
+          var n = random.int(2, 10);
+          for(var i=0; i<n; i++) {
+              var special = random.chance(0.2);
+              HaloAddTimeStamp({
+               color: 0.2 + (special ? random.float(0, 0.8) : 0),
+               complexity: 0.5 + (special ? random.float(0, 0.1) : 0),
+               speed: 0.2
+              })
+          }
+      }.bind(this))
     },
     onKeyPress: function(e) {
         if (e.str == 'G') {
@@ -355,16 +366,17 @@ else {
     minRingRadius: 0.6,
     showGrid: false,
     solidLines: true,
-    evenLineDistribution: true,
+    evenLineDistribution: false,
     maxNumRings: 30,
     minRingRadius: 0.4
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 
   for(var i=0; i<30; i++) {
+      var special = random.chance(0.2);
       HaloAddTimeStamp({
-       color: 0.2 + (random.chance(0.2) ? random.float(0, 0.8) : 0),
-       complexity: 0.5,
+       color: 0.2 + (special ? random.float(0, 0.8) : 0),
+       complexity: 0.5,// + (special ? random.float(0, 0.1) : 0),
        speed: 0.2
       })
   }
