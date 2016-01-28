@@ -32,7 +32,8 @@ var State = {
   growth: 0.01,
   background: [0,0,0,1],
   glow: 0.75,
-  growth: 0.05
+  growth: 0.05,
+  solidLines: false
 }
 
 function HaloSetMode(mode) {
@@ -106,6 +107,7 @@ function HaloInitialize(userOpts) {
         gridColorTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
+      this.halo.setGlobalParam('solidLines', State.solidLines);
       this.halo.setGlobalParam('size', State.size);
       this.halo.setGlobalParam('color', State.color);
       this.halo.setGlobalParam('colorCenter', State.colorCenter);
@@ -187,6 +189,9 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
         this.halo.setGlobalParam('growth', value);
       }.bind(this));
+      this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
+        this.halo.setGlobalParam('solidLines', value);
+      }.bind(this));
 
 
       this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
@@ -211,7 +216,6 @@ function HaloInitialize(userOpts) {
 
           ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
           ctx.setViewMatrix(State.camera.getViewMatrix())
-          ctx.setLineWidth(2);
           ctx.setClearColor(0,0,0,0)
           ctx.setBlend(true);
           ctx.setBlendFunc(ctx.ONE, ctx.ONE);
@@ -234,7 +238,6 @@ function HaloInitialize(userOpts) {
 
         ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
         ctx.setViewMatrix(State.camera.getViewMatrix())
-        ctx.setLineWidth(3);
         ctx.setClearColor(this.halo.backgroundTransparent[0], this.halo.backgroundTransparent[1], this.halo.backgroundTransparent[2], this.halo.backgroundTransparent[3])
         ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
 
