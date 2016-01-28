@@ -25,7 +25,7 @@ var params = paramList.reduce(function(params, param) {
 //scenario A
 HaloInitialize({
   fullscreen: true,
-  gui: false,
+  gui: true,
   assetsPath: 'assets'
 });
 HaloSetMode('present');
@@ -39,7 +39,8 @@ HaloSetGlobalParams({
     growth: 0.05,           /* 0.01 - 0.5 */
     glow: 0.75,             /* 0.0 - 1.0 */
     background: '000000'    /* RRGGBB */,
-    scale: 120
+    scale: 120,
+    //spectrum: ['#FF0000', '#FFFF00', '#FF00FF']
 })
 </script>
 </body>
