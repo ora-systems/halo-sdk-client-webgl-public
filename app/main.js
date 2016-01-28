@@ -35,7 +35,8 @@ var State = {
   growth: 0.05,
   solidLines: false,
   evenLineDistribution: false,
-  minRingRadius: 0.2
+  minRingRadius: 0.2,
+  maxNumRings: 80
 }
 
 function HaloSetMode(mode) {
@@ -200,6 +201,10 @@ function HaloInitialize(userOpts) {
       this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
       this.gui.addHeader('New params').setPosition(180, 10);
+
+      this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
+        this.halo.setGlobalParam('maxNumRings', value);
+      }.bind(this));
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
       }.bind(this));
