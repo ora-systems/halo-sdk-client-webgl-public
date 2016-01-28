@@ -69,7 +69,7 @@ function HaloAddTimeStamp(params) {
 }
 
 function HaloInitialize(userOpts) {
-  console.log('HaloInitialize', userOpts)
+  console.log('HaloInitialize', userOpts || '')
   opts = {
     width: 1280,
     height: 720,
@@ -195,7 +195,7 @@ function HaloInitialize(userOpts) {
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
       this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
     },
-    onKeyDown: function(e) {
+    onKeyPress: function(e) {
         if (e.str == 'G') {
           //TODO: e.str is broken, this.gui.toggleEnabled();
         }
