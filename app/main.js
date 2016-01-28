@@ -134,8 +134,8 @@ function HaloInitialize(userOpts) {
       var fov = opts.scale;
 
       State.camera = new Camera(fov, width / height);
-      State.camera.setPosition([0,3,0]); //TODO: State.arcball.setPosition([0,3,0]);
-      State.camera.setUp([0,0,1]); //TODO: State.arcball.setPosition([0,3,0]);
+      State.camera.setPosition([0,3,0]);
+      State.camera.setUp([0,0,1]);
       State.camera2D = new Camera2D(0, 0, width, height);
       State.arcball = new Arcball(State.camera, width, height);
 
@@ -229,8 +229,9 @@ function HaloInitialize(userOpts) {
     },
     draw: function() {
       var ctx = this.getContext();
-      //TODO: glu.clearColorAndDepth(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
-      //TODO: glu.enableDepthReadAndWrite(true);
+      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1.0);
+      ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+      ctx.setDepthTest(true);
 
       //Workaround for texture loading bug
       if (this.getTime().getElapsedFrames() < 5) {
@@ -246,8 +247,9 @@ function HaloInitialize(userOpts) {
       this.halo.update();
 
       var root = this.fx.reset();
+      ctx.setBlend(false);
       var color = root.render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
-      //TODO: glu.enableAlphaBlending(false);
+      /*
       glow = root
         .render({ drawFunc: this.drawSceneGlow.bind(this)})
         .downsample4()
@@ -259,9 +261,13 @@ function HaloInitialize(userOpts) {
 
       var blackBackground = ((this.halo.background[0] + this.halo.background[1] + this.halo.background[2]) == 0);
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1)
+      ctx.clear(ctx.COLOR_BIT);
       if (!blackBackground) {
-        //TODO: glu.enableAlphaBlending(true);
+          ctx.setBlend(true);
+          ctx.setBlendFunc(ctx.ONE, ctx.ONE);
       }
+      */
+      final = color;
       final.blit({ width: W, height: H });
 
       if (this.gui) this.gui.draw();
