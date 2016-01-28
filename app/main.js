@@ -204,28 +204,45 @@ function HaloInitialize(userOpts) {
         }
     },
     drawScene: function() {
-      var ctx = this.getContext();
-      ctx.pushViewMatrix();
-      ctx.setViewMatrix(State.camera.getViewMatrix())
-      ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
-      ctx.setLineWidth(2);
-      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
-      ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
-      this.halo.draw(State.camera, State.camera2D, this.getWidth(), this.getHeight());
-      ctx.setBlend(false);
-      ctx.popViewMatrix();
+        var ctx = this.getContext();
+        ctx.pushState(ctx.COLOR_BIT | ctx.DEPTH_BIT | ctx.BLEND_BIT);
+        ctx.pushViewMatrix();
+        ctx.pushProjectionMatrix();
+
+          ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
+          ctx.setViewMatrix(State.camera.getViewMatrix())
+          ctx.setLineWidth(2);
+          ctx.setClearColor(0,0,0,0)
+          ctx.setBlend(true);
+          ctx.setBlendFunc(ctx.ONE, ctx.ONE);
+          ctx.setDepthTest(false);
+          ctx.setDepthMask(0);
+
+          ctx.clear(ctx.COLOR_BIT);
+
+          this.halo.draw(State.camera, State.camera2D, this.getWidth(), this.getHeight());
+
+        ctx.popViewMatrix();
+        ctx.popProjectionMatrix();
+        ctx.popState();
     },
     drawSceneGlow: function() {
       var ctx = this.getContext();
+      ctx.pushState(ctx.COLOR_BIT | ctx.DEPTH_BIT | ctx.BLEND_BIT);
       ctx.pushViewMatrix();
-      ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
-      ctx.setViewMatrix(State.camera.getViewMatrix())
-      ctx.setLineWidth(3);
-      ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], this.halo.background[3])
-      ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
-      this.halo.drawSolid(State.camera, State.camera2D, this.getWidth(), this.getHeight());
-      ctx.setBlend(false);
+      ctx.pushProjectionMatrix();
+
+        ctx.setProjectionMatrix(State.camera.getProjectionMatrix())
+        ctx.setViewMatrix(State.camera.getViewMatrix())
+        ctx.setLineWidth(3);
+        ctx.setClearColor(this.halo.backgroundTransparent[0], this.halo.backgroundTransparent[1], this.halo.backgroundTransparent[2], this.halo.backgroundTransparent[3])
+        ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+
+        this.halo.drawSolid(State.camera, State.camera2D, this.getWidth(), this.getHeight());
+
       ctx.popViewMatrix();
+      ctx.popProjectionMatrix();
+      ctx.popState();
     },
     draw: function() {
       var ctx = this.getContext();
@@ -247,9 +264,8 @@ function HaloInitialize(userOpts) {
       this.halo.update();
 
       var root = this.fx.reset();
-      ctx.setBlend(false);
       var color = root.render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
-      /*
+      ctx.setBlend(false);
       glow = root
         .render({ drawFunc: this.drawSceneGlow.bind(this)})
         .downsample4()
@@ -258,16 +274,14 @@ function HaloInitialize(userOpts) {
         .blur5();
       var final = color
         .add(glow, { scale: this.halo.glow});
-
       var blackBackground = ((this.halo.background[0] + this.halo.background[1] + this.halo.background[2]) == 0);
+      if (!blackBackground) {
+          //ctx.setBlend(true);
+          //ctx.setBlendFunc(ctx.ONE, ctx.ONE);
+      }
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1)
       ctx.clear(ctx.COLOR_BIT);
-      if (!blackBackground) {
-          ctx.setBlend(true);
-          ctx.setBlendFunc(ctx.ONE, ctx.ONE);
-      }
-      */
-      final = color;
+
       final.blit({ width: W, height: H });
 
       if (this.gui) this.gui.draw();
