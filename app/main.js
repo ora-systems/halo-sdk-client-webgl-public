@@ -197,7 +197,7 @@ function HaloInitialize(userOpts) {
     },
     onKeyPress: function(e) {
         if (e.str == 'G') {
-          //TODO: e.str is broken, this.gui.toggleEnabled();
+          this.gui.toggleEnabled();
         }
         if (e.str == 'd') {
           State.debug = true;
