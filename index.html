@@ -22,26 +22,58 @@ var params = paramList.reduce(function(params, param) {
     return params;
 }, {})
 
-//scenario A
-HaloInitialize({
-  fullscreen: true,
-  gui: false,
-  assetsPath: 'assets'
-});
-HaloSetMode('present');
-HaloSetGlobalParams({
-    size: params.size || 1,              /* 0.0 - 1.0 */
-    color: params.color || 0.67,            /* 0.0 - 1.0 */
-    complexity: params.complexity || 0.7,        /* 0.0 - 1.0 */
-    speed: params.speed || 0.5,             /* 0.0 - 1.0 */
-    brightness: params.brightness || 1,          /* 0.0 - 1.0 */
-    wobble: params.wobble || 0.1,            /* 0.0 - 1.0 */
-    growth: 0.05,           /* 0.01 - 0.5 */
-    glow: 0.75,             /* 0.0 - 1.0 */
-    background: '000000'    /* RRGGBB */,
-    scale: 120,
-    //spectrum: ['#FF0000', '#FFFF00', '#FF00FF']
-})
+
+function PresentScenario() {
+    HaloInitialize({
+      fullscreen: true,
+      gui: false,
+      assetsPath: 'assets'
+    });
+    HaloSetMode('present');
+    HaloSetGlobalParams({
+        size: params.size || 1,              /* 0.0 - 1.0 */
+        color: params.color || 0.67,            /* 0.0 - 1.0 */
+        complexity: params.complexity || 0.7,        /* 0.0 - 1.0 */
+        speed: params.speed || 0.5,             /* 0.0 - 1.0 */
+        brightness: params.brightness || 1,          /* 0.0 - 1.0 */
+        wobble: params.wobble || 0.1,            /* 0.0 - 1.0 */
+        growth: 0.05,           /* 0.01 - 0.5 */
+        glow: 0.75,             /* 0.0 - 1.0 */
+        background: '000000'    /* RRGGBB */,
+        scale: 120,
+        //spectrum: ['#FF0000', '#FFFF00', '#FF00FF']
+    })
+}
+
+function TimelineScenario() {
+    HaloInitialize({
+        fullscreen: true,
+        gui: false,
+        assetsPath: 'assets'
+    });
+    HaloSetMode('timeline')
+    HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+
+    for(var i=0; i<24; i++) {
+     HaloAddTimeStamp({
+       color: 0.2 + 0.8 * Math.random(),
+       complexity: 0.2 + 0.8 * Math.random(),
+       speed: 0.2 + 0.8 * Math.random()
+     })
+    }
+
+    setInterval(function() {
+     HaloAddTimeStamp({
+       color: 0.2 + 0.8 * Math.random(),
+       complexity: 0.2 + 0.8 * Math.random(),
+       speed: 0.2 + 0.8 * Math.random()
+     })
+    }, 500)
+}
+
+PresentScenario();
+//TimelineScenario();
+</script>
 </script>
 </body>
 </html>
