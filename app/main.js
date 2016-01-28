@@ -169,7 +169,7 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global color center', State, 'colorCenter', {}, function(value) {
         this.halo.setGlobalParam('colorCenter', value);
       }.bind(this));
-      this.gui.addParam('Global color center ratio', State, 'colorCenterRatio', {}, function(value) {
+      this.gui.addParam('Global color ratio', State, 'colorCenterRatio', {}, function(value) {
         this.halo.setGlobalParam('colorCenterRatio', value);
       }.bind(this));
       this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
