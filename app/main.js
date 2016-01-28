@@ -237,9 +237,9 @@ function HaloInitialize(userOpts) {
       this.gui.addButton('Add few more data points', function() {
           var n = random.int(2, 10);
           for(var i=0; i<n; i++) {
-              var special = random.chance(0.2);
+              var special = random.chance(0.3);
               HaloAddTimeStamp({
-               color: 0.2 + (special ? random.float(0, 0.8) : 0),
+               color: 0.1 + (special ? random.float(0, 0.8) : 0),
                complexity: 0.5 + (special ? random.float(0, 0.1) : 0),
                speed: 0.2
               })
@@ -382,9 +382,9 @@ else {
   })
 
   for(var i=0; i<10; i++) {
-      var special = random.chance(0.2);
+      var special = random.chance(0.3);
       HaloAddTimeStamp({
-       color: 0.2 + (special ? random.float(0, 0.8) : 0),
+       color: 0.1 + (special ? random.float(0, 0.8) : 0),
        complexity: 0.5,// + (special ? random.float(0, 0.1) : 0),
        speed: 0.2
       })
