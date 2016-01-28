@@ -77,6 +77,11 @@ function HaloAddTimeStamp(params) {
   State.halo.addTimeStamp(params);
 }
 
+function HaloResetTimeStamps() {
+  if (!State.halo) return;
+  State.halo.ringInstances = [];
+}
+
 function HaloInitialize(userOpts) {
   console.log('HaloInitialize', userOpts || '')
   opts = {
@@ -240,6 +245,9 @@ function HaloInitialize(userOpts) {
               })
           }
       }.bind(this))
+      this.gui.addButton('Reset data points', function() {
+          HaloResetTimeStamps();
+      }.bind(this))
     },
     onKeyPress: function(e) {
         if (e.str == 'G') {
@@ -344,6 +352,7 @@ if (isBrowser) {
   window.HaloSetGlobalParam = HaloSetGlobalParam;
   window.HaloSetGlobalParams = HaloSetGlobalParams;
   window.HaloAddTimeStamp = HaloAddTimeStamp;
+  window.HaloResetTimeStamps = HaloResetTimeStamps;
   window.HaloInitialize = HaloInitialize;
   window.HaloResetCamera = HaloResetCamera;
 }
