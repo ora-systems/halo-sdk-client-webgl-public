@@ -34,6 +34,7 @@ var State = {
   glow: 0.75,
   growth: 0.05,
   solidLines: false,
+  showGrid: true,
   evenLineDistribution: false,
   minRingRadius: 0.2,
   maxNumRings: 80
@@ -210,6 +211,9 @@ function HaloInitialize(userOpts) {
       }.bind(this));
       this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
         this.halo.setGlobalParam('solidLines', value);
+      }.bind(this));
+      this.gui.addParam('Show grid', State, 'showGrid', {}, function(value) {
+        this.halo.setGlobalParam('showGrid', value);
       }.bind(this));
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
