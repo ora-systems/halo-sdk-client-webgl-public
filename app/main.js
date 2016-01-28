@@ -12,6 +12,7 @@ var isBrowser     = require('is-browser');
 var isiOS         = require('is-ios');
 var urify         = require('urify');
 var fx            = require('pex-fx');
+var random        = require('pex-random');
 
 var ASSETS_PATH = isBrowser ? '/assets' : __dirname + '/../assets';
 
@@ -33,11 +34,12 @@ var State = {
   background: [0,0,0,1],
   glow: 0.75,
   growth: 0.05,
-  solidLines: false,
-  showGrid: true,
-  evenLineDistribution: false,
-  minRingRadius: 0.2,
-  maxNumRings: 80
+  solidLines: true,
+  showGrid: false,
+  evenLineDistribution: true,
+  minRingRadius: 0.6,
+  maxNumRings: 60,
+  ringResolution: 128
 }
 
 function HaloSetMode(mode) {
@@ -336,7 +338,7 @@ if (isBrowser) {
 }
 else {
   HaloInitialize();
-  HaloSetMode('present')
+  HaloSetMode('timeline')
   HaloSetGlobalParams({
     size: 1,
     color: 0.67,
@@ -346,7 +348,24 @@ else {
     wobble: 0.1,
     background: '000000',
     growth: 0.05,
-    scale: 120
+    scale: 100,
+    solidLines: true,
+    showGrid: true,
+    evenLineDistribution: false,
+    minRingRadius: 0.6,
+    showGrid: false,
+    solidLines: true,
+    evenLineDistribution: true,
+    maxNumRings: 30,
+    minRingRadius: 0.4
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
+
+  for(var i=0; i<30; i++) {
+      HaloAddTimeStamp({
+       color: 0.2 + (random.chance(0.2) ? random.float(0, 0.8) : 0),
+       complexity: 0.5,
+       speed: 0.2
+      })
+  }
 }
