@@ -14,6 +14,7 @@
     "pex-color": "^1.1.1",
     "pex-context": "^1.0.0-beta.2",
     "pex-draw": "^1.0.0-beta.1",
+    "pex-fx": "^1.0.0-beta.2",
     "pex-geom": "^1.0.0-beta.1",
     "pex-gui": "^1.0.0-beta.1",
     "pex-io": "^1.0.0-beta.1",

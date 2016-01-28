@@ -11,6 +11,7 @@ var Halo          = require('ora-halo');
 var isBrowser     = require('is-browser');
 var isiOS         = require('is-ios');
 var urify         = require('urify');
+var fx            = require('pex-fx');
 
 var ASSETS_PATH = isBrowser ? '/assets' : __dirname + '/../assets';
 
@@ -95,6 +96,8 @@ function HaloInitialize(userOpts) {
       var ctx = this.getContext();
       var width = this.getWidth();
       var height = this.getHeight();
+
+      this.fx = fx(ctx);
 
       State.halo = this.halo = new Halo(ctx, this, {
         lineDotsTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
@@ -242,23 +245,24 @@ function HaloInitialize(userOpts) {
 
       this.halo.update();
 
-      this.drawScene(); //TODO: var color = fx().render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
+      var root = this.fx.reset();
+      var color = root.render({ drawFunc: this.drawScene.bind(this), width: W, height: H});
       //TODO: glu.enableAlphaBlending(false);
-      //glow = color
-        //.render({ drawFunc: this.drawSceneGlow.bind(this)})
-        //.downsample4()
-        //.downsample2()
-        //.blur5()
-        //.blur5();
-      //var final = color
-        //.add(glow, { scale: this.halo.glow});
+      glow = root
+        .render({ drawFunc: this.drawSceneGlow.bind(this)})
+        .downsample4()
+        .downsample2()
+        .blur5()
+        .blur5();
+      var final = color
+        .add(glow, { scale: this.halo.glow});
 
       var blackBackground = ((this.halo.background[0] + this.halo.background[1] + this.halo.background[2]) == 0);
       ctx.setClearColor(this.halo.background[0], this.halo.background[1], this.halo.background[2], 1)
-      //TODO: if (!blackBackground) {
+      if (!blackBackground) {
         //TODO: glu.enableAlphaBlending(true);
-      //}
-      //TODO: final.blit({ width: W, height: H });
+      }
+      final.blit({ width: W, height: H });
 
       if (this.gui) this.gui.draw();
     }
