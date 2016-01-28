@@ -33,7 +33,8 @@ var State = {
   background: [0,0,0,1],
   glow: 0.75,
   growth: 0.05,
-  solidLines: false
+  solidLines: false,
+  minRingRadius: 0.2
 }
 
 function HaloSetMode(mode) {
@@ -189,16 +190,20 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
         this.halo.setGlobalParam('growth', value);
       }.bind(this));
-      this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
-        this.halo.setGlobalParam('solidLines', value);
-      }.bind(this));
-
 
       this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
       this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
       this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
       this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
+
+      this.gui.addHeader('New params').setPosition(180, 10);
+      this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
+        this.halo.setGlobalParam('minRingRadius', value);
+      }.bind(this));
+      this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
+        this.halo.setGlobalParam('solidLines', value);
+      }.bind(this));
     },
     onKeyPress: function(e) {
         if (e.str == 'G') {
