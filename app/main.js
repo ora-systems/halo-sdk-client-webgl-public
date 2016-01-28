@@ -129,6 +129,7 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('minRingRadius', State.minRingRadius);
       this.halo.setGlobalParam('maxNumRings', State.maxNumRings);
       this.halo.setGlobalParam('showGrid', State.showGrid);
+      this.halo.setGlobalParam('ringResolution', State.ringResolution);
 
       this.initGUI();
 
@@ -198,6 +199,9 @@ function HaloInitialize(userOpts) {
       }.bind(this));
       this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
         this.halo.setGlobalParam('growth', value);
+      }.bind(this));
+      this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
+        this.halo.setGlobalParam('ringResolution', value);
       }.bind(this));
 
       this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
