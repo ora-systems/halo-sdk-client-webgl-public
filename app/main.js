@@ -34,6 +34,7 @@ var State = {
   glow: 0.75,
   growth: 0.05,
   solidLines: false,
+  evenLineDistribution: false,
   minRingRadius: 0.2
 }
 
@@ -108,7 +109,6 @@ function HaloInitialize(userOpts) {
         gridColorTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
-      this.halo.setGlobalParam('solidLines', State.solidLines);
       this.halo.setGlobalParam('size', State.size);
       this.halo.setGlobalParam('color', State.color);
       this.halo.setGlobalParam('colorCenter', State.colorCenter);
@@ -120,6 +120,8 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('background', State.background);
       this.halo.setGlobalParam('growth', State.growth);
       this.halo.setGlobalParam('glow', State.glow);
+      this.halo.setGlobalParam('solidLines', State.solidLines);
+      this.halo.setGlobalParam('evenLineDistribution', State.evenLineDistribution);
 
       this.initGUI();
 
@@ -203,6 +205,9 @@ function HaloInitialize(userOpts) {
       }.bind(this));
       this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
         this.halo.setGlobalParam('solidLines', value);
+      }.bind(this));
+      this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
+        this.halo.setGlobalParam('evenLineDistribution', value);
       }.bind(this));
     },
     onKeyPress: function(e) {
