@@ -124,6 +124,9 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('glow', State.glow);
       this.halo.setGlobalParam('solidLines', State.solidLines);
       this.halo.setGlobalParam('evenLineDistribution', State.evenLineDistribution);
+      this.halo.setGlobalParam('minRingRadius', State.minRingRadius);
+      this.halo.setGlobalParam('maxNumRings', State.maxNumRings);
+      this.halo.setGlobalParam('showGrid', State.showGrid);
 
       this.initGUI();
 
