@@ -48,6 +48,8 @@ function HaloSetMode(mode) {
 function HaloSetGlobalParam(name, value) {
   if (!State.halo) return;
 
+  State.dirty = true;
+
   if (name == 'scale') {
       State.camera.setFov(value);
   }
@@ -309,7 +311,13 @@ function HaloInitialize(userOpts) {
 
       final.blit({ width: W, height: H });
 
-      if (this.gui) this.gui.draw();
+      if (this.gui) {
+          if (this.gui.enabled && State.dirty) {
+              this.gui.items[0].dirty = true;
+              State.dirty = false;
+          }
+          this.gui.draw();
+      }
     }
   });
 }
