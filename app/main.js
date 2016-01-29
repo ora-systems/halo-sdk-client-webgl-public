@@ -82,6 +82,10 @@ function HaloResetTimeStamps() {
   State.halo.ringInstances = [];
 }
 
+function HaloSetTimeStampParam(i, name, value) {
+
+}
+
 function HaloInitialize(userOpts) {
   console.log('HaloInitialize', userOpts || '')
   opts = {
@@ -215,7 +219,7 @@ function HaloInitialize(userOpts) {
           this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
           this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
           this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
-          this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+
           this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
           this.gui.addHeader('New params').setPosition(180, 10);
@@ -225,6 +229,9 @@ function HaloInitialize(userOpts) {
           }.bind(this));
       }
 
+      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+
+
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
       }.bind(this));
@@ -232,7 +239,6 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
       }.bind(this));
-
 
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
@@ -382,7 +388,7 @@ else {
     evenLineDistribution: false,
     minRingRadius: 0.6,
     showGrid: false,
-    solidLines: true,
+    solidLines: false,
     evenLineDistribution: true,
     maxNumRings: 30,
     minRingRadius: 0.6
@@ -394,7 +400,9 @@ else {
       HaloAddTimeStamp({
        color: 0.1 + (special ? random.float(0, 0.8) : 0),
        complexity: 0.5,// + (special ? random.float(0, 0.1) : 0),
-       speed: 0.2
+       speed: 0.2,
+       opacity: 1,
+       lineType: i % 2
       })
   }
 }
