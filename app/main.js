@@ -391,7 +391,8 @@ else {
     solidLines: false,
     evenLineDistribution: true,
     maxNumRings: 30,
-    minRingRadius: 0.6
+    minRingRadius: 0.5,
+    maxRingRadius: 0.5
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 
