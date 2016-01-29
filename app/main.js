@@ -174,80 +174,88 @@ function HaloInitialize(userOpts) {
       if (isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
       else if (isiOS) this.gui.toggleEnabled();
 
-      this.gui.addParam('Global size', State, 'size', {}, function(value) {
-        this.halo.setGlobalParam('size', value);
-      }.bind(this));
-      this.gui.addParam('Global color', State, 'color', {}, function(value) {
-        this.halo.setGlobalParam('color', value);
-      }.bind(this));
-      this.gui.addParam('Global color center', State, 'colorCenter', {}, function(value) {
-        this.halo.setGlobalParam('colorCenter', value);
-      }.bind(this));
-      this.gui.addParam('Global color ratio', State, 'colorCenterRatio', {}, function(value) {
-        this.halo.setGlobalParam('colorCenterRatio', value);
-      }.bind(this));
-      this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
-        this.halo.setGlobalParam('complexity', value);
-      }.bind(this));
-      this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
-        this.halo.setGlobalParam('speed', value);
-      }.bind(this));
-      this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
-        this.halo.setGlobalParam('brightness', value);
-      }.bind(this));
-      this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
-        this.halo.setGlobalParam('wobble', value);
-      }.bind(this));
-      this.gui.addParam('Global background', State, 'background', {}, function(value) {
-        this.halo.setGlobalParam('background', value);
-      }.bind(this));
-      this.gui.addParam('Global glow', State, 'glow', {}, function(value) {
-        this.halo.setGlobalParam('glow', value);
-      }.bind(this));
-      this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
-        this.halo.setGlobalParam('growth', value);
-      }.bind(this));
-      this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
-        this.halo.setGlobalParam('ringResolution', value);
-      }.bind(this));
+      if (opts.limitedGUI !== true) {
+          this.gui.addParam('Global size', State, 'size', {}, function(value) {
+            this.halo.setGlobalParam('size', value);
+          }.bind(this));
+          this.gui.addParam('Global color', State, 'color', {}, function(value) {
+            this.halo.setGlobalParam('color', value);
+          }.bind(this));
+          this.gui.addParam('Global color center', State, 'colorCenter', {}, function(value) {
+            this.halo.setGlobalParam('colorCenter', value);
+          }.bind(this));
+          this.gui.addParam('Global color ratio', State, 'colorCenterRatio', {}, function(value) {
+            this.halo.setGlobalParam('colorCenterRatio', value);
+          }.bind(this));
+          this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
+            this.halo.setGlobalParam('complexity', value);
+          }.bind(this));
+          this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
+            this.halo.setGlobalParam('speed', value);
+          }.bind(this));
+          this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
+            this.halo.setGlobalParam('brightness', value);
+          }.bind(this));
+          this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
+            this.halo.setGlobalParam('wobble', value);
+          }.bind(this));
+          this.gui.addParam('Global background', State, 'background', {}, function(value) {
+            this.halo.setGlobalParam('background', value);
+          }.bind(this));
+          this.gui.addParam('Global glow', State, 'glow', {}, function(value) {
+            this.halo.setGlobalParam('glow', value);
+          }.bind(this));
+          this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
+            this.halo.setGlobalParam('growth', value);
+          }.bind(this));
+          this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
+            this.halo.setGlobalParam('ringResolution', value);
+          }.bind(this));
 
-      this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
-      this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
-      this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
-      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
-      this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
+          this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
+          this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
+          this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
+          this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+          this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
-      this.gui.addHeader('New params').setPosition(180, 10);
+          this.gui.addHeader('New params').setPosition(180, 10);
 
-      this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
-        this.halo.setGlobalParam('maxNumRings', value);
-      }.bind(this));
+          this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
+            this.halo.setGlobalParam('maxNumRings', value);
+          }.bind(this));
+      }
+
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
       }.bind(this));
-      this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
-        this.halo.setGlobalParam('solidLines', value);
-      }.bind(this));
-      this.gui.addParam('Show grid', State, 'showGrid', {}, function(value) {
-        this.halo.setGlobalParam('showGrid', value);
-      }.bind(this));
+
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
       }.bind(this));
-      this.gui.addButton('Add few more data points', function() {
-          var n = random.int(2, 10);
-          for(var i=0; i<n; i++) {
-              var special = random.chance(0.3);
-              HaloAddTimeStamp({
-               color: 0.1 + (special ? random.float(0, 0.8) : 0),
-               complexity: 0.5 + (special ? random.float(0, 0.1) : 0),
-               speed: 0.2
-              })
-          }
-      }.bind(this))
-      this.gui.addButton('Reset data points', function() {
-          HaloResetTimeStamps();
-      }.bind(this))
+
+
+      if (opts.limitedGUI !== true) {
+          this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
+            this.halo.setGlobalParam('solidLines', value);
+          }.bind(this));
+          this.gui.addParam('Show grid', State, 'showGrid', {}, function(value) {
+            this.halo.setGlobalParam('showGrid', value);
+          }.bind(this));
+          this.gui.addButton('Add few more data points', function() {
+              var n = random.int(2, 10);
+              for(var i=0; i<n; i++) {
+                  var special = random.chance(0.3);
+                  HaloAddTimeStamp({
+                   color: 0.1 + (special ? random.float(0, 0.8) : 0),
+                   complexity: 0.5 + (special ? random.float(0, 0.1) : 0),
+                   speed: 0.2
+                  })
+              }
+          }.bind(this))
+          this.gui.addButton('Reset data points', function() {
+              HaloResetTimeStamps();
+          }.bind(this))
+      }
     },
     onKeyPress: function(e) {
         if (e.str == 'G') {
