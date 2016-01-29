@@ -48,31 +48,43 @@ function PresentScenario() {
 function TimelineScenario() {
     HaloInitialize({
         fullscreen: true,
-        gui: false,
-        assetsPath: 'assets'
+        gui: true
     });
     HaloSetMode('timeline')
-    HaloSetGlobalParam('maxNumRings', 24); //e.g. every 2h
+    HaloSetGlobalParams({
+      size: 1,
+      color: 0.67,
+      complexity: 0.7,
+      speed: 0.5,
+      brightness: 1,
+      wobble: 0.1,
+      background: '000000',
+      growth: 0.05,
+      scale: 100,
+      solidLines: true,
+      showGrid: true,
+      evenLineDistribution: false,
+      minRingRadius: 0.6,
+      showGrid: false,
+      solidLines: true,
+      evenLineDistribution: true,
+      maxNumRings: 30,
+      minRingRadius: 0.6
+      //spectrum: ['FF0000', '00FF00', '0000FF']
+    })
 
-    for(var i=0; i<24; i++) {
-     HaloAddTimeStamp({
-       color: 0.2 + 0.8 * Math.random(),
-       complexity: 0.2 + 0.8 * Math.random(),
-       speed: 0.2 + 0.8 * Math.random()
-     })
+    for(var i=0; i<10; i++) {
+        var special = Math.random() < 0.3;
+        HaloAddTimeStamp({
+         color: 0.1 + (special ? Math.random() * 0.8 : 0),
+         complexity: 0.5,// + (special ? random.float(0, 0.1) : 0),
+         speed: 0.2
+        })
     }
-
-    setInterval(function() {
-     HaloAddTimeStamp({
-       color: 0.2 + 0.8 * Math.random(),
-       complexity: 0.2 + 0.8 * Math.random(),
-       speed: 0.2 + 0.8 * Math.random()
-     })
-    }, 500)
 }
 
-PresentScenario();
-//TimelineScenario();
+//PresentScenario();
+TimelineScenario();
 </script>
 </script>
 </body>
