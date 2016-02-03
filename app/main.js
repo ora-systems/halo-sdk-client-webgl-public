@@ -40,7 +40,10 @@ var State = {
   minRingRadius: 0.6,
   maxNumRings: 60,
   ringResolution: 128,
-  auraOpacity: 0.5
+  auraOpacity: 0.5,
+  waveColor: 0.5,
+  waveCount: 5,
+  waveSpeed: 0.15
 }
 
 function HaloSetMode(mode) {
@@ -253,6 +256,18 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('auraOpacity', value);
       }.bind(this));
 
+      this.gui.addParam('Wave count', State, 'waveCount', { min: 0, max: 6, step: 1 }, function(value) {
+        this.halo.setGlobalParam('waveCount', value);
+      }.bind(this));
+
+      this.gui.addParam('Wave color', State, 'waveColor', {}, function(value) {
+        this.halo.setGlobalParam('waveColor', value);
+      }.bind(this));
+
+      this.gui.addParam('Wave speed', State, 'waveSpeed', {}, function(value) {
+        this.halo.setGlobalParam('waveSpeed', value);
+      }.bind(this));
+
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Solid lines', State, 'solidLines', {}, function(value) {
             this.halo.setGlobalParam('solidLines', value);
@@ -405,7 +420,7 @@ else {
     evenLineDistribution: true,
     maxNumRings: 30,
     minRingRadius: 0.5,
-    maxRingRadius: 0.5,
+    maxRingRadius: 1,
     showAuraAtRing: 20,
     auraOpacity: 1
     //spectrum: ['FF0000', '00FF00', '0000FF']
