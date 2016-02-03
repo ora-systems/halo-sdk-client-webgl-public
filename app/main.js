@@ -200,15 +200,15 @@ function HaloInitialize(userOpts) {
           this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
             this.halo.setGlobalParam('complexity', value);
           }.bind(this));
-      if (opts.limitedGUI !== true) {
+          this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
+            this.halo.setGlobalParam('wobble', value);
+          }.bind(this));
           this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
             this.halo.setGlobalParam('speed', value);
           }.bind(this));
+      if (opts.limitedGUI !== true) {
           this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
             this.halo.setGlobalParam('brightness', value);
-          }.bind(this));
-          this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
-            this.halo.setGlobalParam('wobble', value);
           }.bind(this));
           this.gui.addParam('Global background', State, 'background', {}, function(value) {
             this.halo.setGlobalParam('background', value);
