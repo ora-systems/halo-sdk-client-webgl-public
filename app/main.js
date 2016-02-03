@@ -38,7 +38,7 @@ var State = {
   showGrid: false,
   evenLineDistribution: true,
   minRingRadius: 0.6,
-  maxNumRings: 60,
+  maxNumRings: 30,
   ringResolution: 128,
   auraOpacity: 0.5,
   waveColor: 0.5,
@@ -226,22 +226,21 @@ function HaloInitialize(userOpts) {
       }
 
       this.gui.addHeader('Additional Params');
+      this.gui.addParam('ringResolution', State, 'ringResolution', { min: 24, max: 256}, function(value) {
+        this.halo.setGlobalParam('ringResolution', value);
+      }.bind(this));
       if (opts.limitedGUI !== true) {
-          this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
-            this.halo.setGlobalParam('ringResolution', value);
-          }.bind(this));
-
           this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
           this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
           this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
 
           this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
-
-          this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
-            this.halo.setGlobalParam('maxNumRings', value);
-          }.bind(this));
       }
+
+      this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
+        this.halo.setGlobalParam('maxNumRings', value);
+      }.bind(this));
 
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
 
