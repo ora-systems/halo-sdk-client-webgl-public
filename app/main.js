@@ -43,7 +43,8 @@ var State = {
   auraOpacity: 0.5,
   waveColor: 0.5,
   waveCount: 5,
-  waveSpeed: 0.15
+  waveSpeed: 0.15,
+  stratified: false
 }
 
 function HaloSetMode(mode) {
@@ -266,6 +267,10 @@ function HaloInitialize(userOpts) {
 
       this.gui.addParam('Wave speed', State, 'waveSpeed', {}, function(value) {
         this.halo.setGlobalParam('waveSpeed', value);
+      }.bind(this));
+
+      this.gui.addParam('Stratified', State, 'stratified', {}, function(value) {
+        this.halo.setGlobalParam('stratified', value);
       }.bind(this));
 
       if (opts.limitedGUI !== true) {
