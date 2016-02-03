@@ -92,7 +92,8 @@ function HaloInitialize(userOpts) {
   opts = {
     width: 1280,
     height: 720,
-    scale: 60
+    scale: 60,
+    limitedGUI: true
   };
   for (var p in userOpts) {
     if (userOpts.hasOwnProperty(p)) {
@@ -179,6 +180,7 @@ function HaloInitialize(userOpts) {
       if (isBrowser && (opts.gui !== true)) this.gui.toggleEnabled();
       else if (isiOS) this.gui.toggleEnabled();
 
+      this.gui.addHeader('Global Params')
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Global size', State, 'size', {}, function(value) {
             this.halo.setGlobalParam('size', value);
@@ -192,9 +194,11 @@ function HaloInitialize(userOpts) {
           this.gui.addParam('Global color ratio', State, 'colorCenterRatio', {}, function(value) {
             this.halo.setGlobalParam('colorCenterRatio', value);
           }.bind(this));
+      }
           this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
             this.halo.setGlobalParam('complexity', value);
           }.bind(this));
+      if (opts.limitedGUI !== true) {
           this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
             this.halo.setGlobalParam('speed', value);
           }.bind(this));
@@ -213,6 +217,10 @@ function HaloInitialize(userOpts) {
           this.gui.addParam('Global growth', State, 'growth', {}, function(value) {
             this.halo.setGlobalParam('growth', value);
           }.bind(this));
+      }
+
+      this.gui.addHeader('Additional Params').setPosition(180, 10);
+      if (opts.limitedGUI !== true) {
           this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
             this.halo.setGlobalParam('ringResolution', value);
           }.bind(this));
@@ -223,15 +231,14 @@ function HaloInitialize(userOpts) {
 
           this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
 
-          this.gui.addHeader('New params').setPosition(180, 10);
 
           this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
             this.halo.setGlobalParam('maxNumRings', value);
           }.bind(this));
       }
 
-      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
 
+      this.gui.addTexture2D('Color texture', this.halo.colorTexture);
 
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
