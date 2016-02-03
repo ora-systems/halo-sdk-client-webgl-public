@@ -39,7 +39,8 @@ var State = {
   evenLineDistribution: true,
   minRingRadius: 0.6,
   maxNumRings: 60,
-  ringResolution: 128
+  ringResolution: 128,
+  auraOpacity: 0.5
 }
 
 function HaloSetMode(mode) {
@@ -143,6 +144,7 @@ function HaloInitialize(userOpts) {
       this.halo.setGlobalParam('maxNumRings', State.maxNumRings);
       this.halo.setGlobalParam('showGrid', State.showGrid);
       this.halo.setGlobalParam('ringResolution', State.ringResolution);
+      this.halo.setGlobalParam('auraOpacity', State.auraOpacity);
 
       this.initGUI();
 
@@ -219,7 +221,7 @@ function HaloInitialize(userOpts) {
           }.bind(this));
       }
 
-      this.gui.addHeader('Additional Params').setPosition(180, 10);
+      this.gui.addHeader('Additional Params');
       if (opts.limitedGUI !== true) {
           this.gui.addParam('ringResolution', State, 'ringResolution', { min: 32, max: 256}, function(value) {
             this.halo.setGlobalParam('ringResolution', value);
@@ -237,7 +239,6 @@ function HaloInitialize(userOpts) {
           }.bind(this));
       }
 
-
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
 
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
@@ -246,6 +247,10 @@ function HaloInitialize(userOpts) {
 
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
+      }.bind(this));
+
+      this.gui.addParam('Aura opacity', State, 'auraOpacity', {}, function(value) {
+        this.halo.setGlobalParam('auraOpacity', value);
       }.bind(this));
 
       if (opts.limitedGUI !== true) {
@@ -400,7 +405,9 @@ else {
     evenLineDistribution: true,
     maxNumRings: 30,
     minRingRadius: 0.5,
-    maxRingRadius: 0.5
+    maxRingRadius: 0.5,
+    showAuraAtRing: 20,
+    auraOpacity: 1
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 
