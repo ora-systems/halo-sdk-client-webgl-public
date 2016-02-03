@@ -83,7 +83,8 @@ function HaloResetTimeStamps() {
 }
 
 function HaloSetTimeStampParam(i, name, value) {
-
+  if (!State.halo) return;
+  State.halo.setTimeStampParam(i, name, value);
 }
 
 function HaloInitialize(userOpts) {
