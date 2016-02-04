@@ -29,6 +29,7 @@ var State = {
   speed: 0.5,
   colorTextureIndex: 0,
   wobble: 0,
+  wobbleFadeout: 1,
   debug: true,
   growth: 0.01,
   background: [0,0,0,1],
@@ -206,6 +207,9 @@ function HaloInitialize(userOpts) {
           }.bind(this));
           this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
             this.halo.setGlobalParam('wobble', value);
+          }.bind(this));
+          this.gui.addParam('Global wobble fadeout', State, 'wobbleFadeout', {}, function(value) {
+            this.halo.setGlobalParam('wobbleFadeout', value);
           }.bind(this));
           this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
             this.halo.setGlobalParam('speed', value);
