@@ -429,7 +429,7 @@ else {
     maxNumRings: 30,
     minRingRadius: 0.5,
     maxRingRadius: 1,
-    showAuraAtRing: 20,
+    showAuraAtRing: -1,
     auraOpacity: 1
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
