@@ -435,14 +435,36 @@ else {
     //spectrum: ['FF0000', '00FF00', '0000FF']
   })
 
-  for(var i=0; i<10; i++) {
-      var special = random.chance(0.3);
+  var lazyDay = [
+      [0,0,0,0,1,1,1,1,5,6,2,1,1,1,9,1,1],
+      [0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,0,0]
+  ]
+
+  var activeDay = [
+      [1,1,1,5,7,5,8,8,8,7,7,8,9,6,7,7,7,7,3,1,6,5,4,3,2,1,1],
+      [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0]
+  ]
+
+  var currDay = activeDay;
+
+  for(var i=0; i<currDay[1].length; i++) {
+      var value = [];
+      var numDataSeries = 2; //color + line type
+      for(var j=0; j<numDataSeries; j++) {
+          if (currDay[j][i] !== undefined) {
+              value[j] = currDay[j][i];
+          }
+          else {
+              value[j] = prevDay[j][i];
+          }
+      }
+      var isPrevDay = false;
+      var knokckout = false;
       HaloAddTimeStamp({
-       color: 0.1 + (special ? random.float(0, 0.8) : 0),
-       complexity: 0.5,// + (special ? random.float(0, 0.1) : 0),
-       speed: 0.2,
-       opacity: 1,
-       lineType: i % 2
+          color: isPrevDay ? -1 : value[0] / 10,
+          complexity: 0.5,
+          lineType: value[1],
+          opacity: knokckout ? 0 : (isPrevDay ? 0.25 : 1)
       })
   }
 }
