@@ -86,6 +86,7 @@ function HaloAddTimeStamp(params) {
 function HaloResetTimeStamps() {
   if (!State.halo) return;
   State.halo.ringInstances = [];
+  State.halo.waveInstances = [];
 }
 
 function HaloSetTimeStampParam(i, name, value) {
