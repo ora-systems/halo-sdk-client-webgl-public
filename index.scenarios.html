@@ -247,7 +247,7 @@ function SendDataToHalo() {
         var isPrevDay = (prevDayLen > currDayLen) && (i > currDayLen);
         var knokckout = i == dailyGoal;
         HaloAddTimeStamp({
-            color: value[0] / 10,
+            color: isPrevDay ? -1 : value[0] / 10,
             complexity: 0.5,
             lineType: value[1],
             opacity: knokckout ? 0 : (isPrevDay ? 0.25 : 1)
