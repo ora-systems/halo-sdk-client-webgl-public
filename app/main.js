@@ -6,7 +6,6 @@ var Camera        = require('pex-cam').PerspCamera;
 var Camera2D      = require('pex-cam').OrthoCamera;
 var Arcball       = require('pex-cam').Arcball;
 var GUI           = require('pex-gui');
-//var fx            = require('fx'); //TODO:fx
 var Halo          = require('ora-halo');
 var isBrowser     = require('is-browser');
 var isiOS         = require('is-ios');
