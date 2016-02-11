@@ -1,6 +1,6 @@
 {
   "name": "HaloSDKWebGL",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "private": true,
   "dependencies": {
     "beefy": "^2.1.5",
