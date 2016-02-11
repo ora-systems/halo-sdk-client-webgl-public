@@ -96,12 +96,17 @@ function HaloInitialize(userOpts) {
       highdpi: Platform.isiOS ? 2 : 1
     },
     init: function() {
-      State.halo = this.halo = new Halo({
-        lineDotsTexture: isBrowser ? require('../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
-        lineSolidTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: isBrowser ? require('../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
-        gridColorTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
-      });
+      var params = {
+          lineDotsTexture: isBrowser ? require('../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
+          lineSolidTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
+          colorTexture: isBrowser ? require('../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
+          gridColorTexture: isBrowser ? require('../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
+      }
+      if (opts.gradient) {
+          params.colorTexture = opts.gradient;
+      }
+
+      State.halo = this.halo = new Halo(params);
 
       this.halo.setGlobalParam('size', State.size);
       this.halo.setGlobalParam('color', State.color);
