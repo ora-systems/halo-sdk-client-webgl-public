@@ -236,12 +236,16 @@ HaloMayoSetHourValues(yesterday, today); //Big bright Halo
 //HaloMayoSetHourValues(yesterday, todayMorning); //Small halo
 
 //Need to clarify these calculation with Peter or Blunt
+//
+HaloSetGlobalParams({ complexity: 0.5 })
 
 //EXERCISE OPTIMAL THRESHOLD (wobble movement)
-HaloSetGlobalParam({ wobble:1 })
+HaloSetGlobalParams({ wobble: 0.5, wobbleFadeout: 0.9 /*center influence*/ })
+
+
 
 //DAILY ACTIVITY OPTIMAL THRESHOLD (radiating waves)
-HaloSetGlobalParam({ waveCount: 5, waveSpeed: 0.5, waveColor: 0.2 })
+HaloSetGlobalParams({ waveCount: 2, waveSpeed: 0.5, waveColor: 0.2 })
 
 </script>
 </script>
