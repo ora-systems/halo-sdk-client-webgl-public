@@ -38,7 +38,7 @@ var State = {
   showGrid: false,
   evenLineDistribution: true,
   minRingRadius: 0.6,
-  maxNumRings: 30,
+  maxNumRings: 60,
   ringResolution: 128,
   auraOpacity: 0.5,
   waveColor: 0.5,
