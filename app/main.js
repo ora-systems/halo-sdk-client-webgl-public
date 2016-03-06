@@ -99,7 +99,7 @@ function HaloInitialize(userOpts) {
     width: 1280,
     height: 720,
     scale: 60,
-    limitedGUI: true
+    limitedGUI: false
   };
   for (var p in userOpts) {
     if (userOpts.hasOwnProperty(p)) {
