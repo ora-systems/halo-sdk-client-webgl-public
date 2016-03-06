@@ -42,7 +42,7 @@ var State = {
   ringResolution: 128,
   auraOpacity: 0.5,
   waveColor: 0.5,
-  waveCount: 5,
+  waveCount: 0,
   waveSpeed: 0.15,
   stratified: false
 }
