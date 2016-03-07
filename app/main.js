@@ -37,14 +37,16 @@ var State = {
   solidLines: true,
   showGrid: false,
   evenLineDistribution: true,
-  minRingRadius: 0.6,
+  minRingRadius: 0.35,
+  minNumRings: 10,
   maxNumRings: 60,
   ringResolution: 128,
   auraOpacity: 0.5,
   waveColor: 0.5,
   waveCount: 0,
   waveSpeed: 0.15,
-  stratified: false
+  stratified: false,
+  coreSmoothing: 0.5
 }
 
 function HaloSetMode(mode) {
