@@ -26,22 +26,36 @@ var params = paramList.reduce(function(params, param) {
 function PresentScenario() {
     HaloInitialize({
       fullscreen: true,
-      gui: false,
+      gui: true,
       assetsPath: 'assets'
     });
     HaloSetMode('present');
     HaloSetGlobalParams({
-        size: params.size || 1,              /* 0.0 - 1.0 */
-        color: params.color || 0.67,            /* 0.0 - 1.0 */
-        complexity: params.complexity || 0.7,        /* 0.0 - 1.0 */
-        speed: params.speed || 0.5,             /* 0.0 - 1.0 */
-        brightness: params.brightness || 1,          /* 0.0 - 1.0 */
-        wobble: params.wobble || 0.1,            /* 0.0 - 1.0 */
-        growth: 0.05,           /* 0.01 - 0.5 */
-        glow: 0.75,             /* 0.0 - 1.0 */
-        background: '000000'    /* RRGGBB */,
-        scale: 120,
-        //spectrum: ['#FF0000', '#FFFF00', '#FF00FF']
+      size: 1,
+      color: 0.01,
+      colorCenter: 0.26,
+      colorCenterRatio: 0.5,
+      complexity: 0.7,
+      speed: 0.5,
+      brightness: 1,
+      wobble: 0.1,
+      background: '000000',
+      growth: 0.05,
+      scale: 100,
+      solidLines: true,
+      showGrid: true,
+      evenLineDistribution: false,
+      minRingRadius: 0.6,
+      showGrid: false,
+      evenLineDistribution: true,
+      maxNumRings: 60,
+      minRingRadius: 0.5,
+      maxRingRadius: 1,
+      showAuraAtRing: -1,
+      auraOpacity: 1,
+      waveCount: 0,
+      //spectrum: ['FF0000', '00FF00', '0000FF'] //custom color spectrum array
+      //colorTexture: 'assets/textures/halo-gradient-new.png' custom color gradient
     })
 }
 
@@ -55,7 +69,7 @@ function TimelineScenario() {
         size: 1,
         color: 0.67,
         complexity: 0.7,
-        speed: 0.5,
+        speed: 0.75,
         brightness: 1,
         wobble: 0.1,
         background: '000000',
@@ -66,12 +80,14 @@ function TimelineScenario() {
         evenLineDistribution: false,
         minRingRadius: 0.6,
         showGrid: false,
-        solidLines: false,
+        solidLines: true,
         evenLineDistribution: true,
-        maxNumRings: 50,
+        maxNumRings: 60,
         minRingRadius: 0.6
       //spectrum: ['FF0000', '00FF00', '0000FF']
     })
+
+    /*
 
     var lazyDay = [
         [0,0,0,0,1,1,1,1,5,6,2,1,1,1,9,1,1],
@@ -105,10 +121,11 @@ function TimelineScenario() {
             opacity: knokckout ? 0 : (isPrevDay ? 0.25 : 1)
         })
     }
+    */
 }
 
-//PresentScenario();
-TimelineScenario();
+PresentScenario();
+//TimelineScenario();
 </script>
 </script>
 </body>

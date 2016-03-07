@@ -23,6 +23,7 @@ var State = {
   color: 0.05,
   colorCenter: 0.0,
   colorCenterRatio: 0.0,
+  highlightRing: 0.8,
   complexity: 0.7,
   brightness: 1,
   speed: 0.5,
@@ -100,7 +101,7 @@ function HaloInitialize(userOpts) {
   opts = {
     width: 1280,
     height: 720,
-    scale: 60,
+    scale: 100,
     limitedGUI: false
   };
   for (var p in userOpts) {
@@ -134,37 +135,11 @@ function HaloInitialize(userOpts) {
         gridColorTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
-      this.halo.setGlobalParam('size', State.size);
-      this.halo.setGlobalParam('color', State.color);
-      this.halo.setGlobalParam('colorCenter', State.colorCenter);
-      this.halo.setGlobalParam('colorCenterRatio', State.colorCenterRatio);
-      this.halo.setGlobalParam('complexity', State.complexity);
-      this.halo.setGlobalParam('speed', State.speed);
-      this.halo.setGlobalParam('brightness', State.brightness);
-      this.halo.setGlobalParam('wobble', State.wobble);
-      this.halo.setGlobalParam('background', State.background);
-      this.halo.setGlobalParam('growth', State.growth);
-      this.halo.setGlobalParam('glow', State.glow);
-      this.halo.setGlobalParam('solidLines', State.solidLines);
-      this.halo.setGlobalParam('evenLineDistribution', State.evenLineDistribution);
-      this.halo.setGlobalParam('minRingRadius', State.minRingRadius);
-      this.halo.setGlobalParam('maxNumRings', State.maxNumRings);
-      this.halo.setGlobalParam('showGrid', State.showGrid);
-      this.halo.setGlobalParam('ringResolution', State.ringResolution);
-      this.halo.setGlobalParam('auraOpacity', State.auraOpacity);
+      Object.keys(State).forEach(function(param) {
+          this.halo.setGlobalParam(param, State[param]);
+      }.bind(this))
 
       this.initGUI();
-
-      //TODO: if (isiOS) {
-      //  this.on('mouseDragged', function(e) {
-      //    if (e.y > this.getHeight() * 0.8) {
-      //      e.handled = true;
-      //      this.halo.setGlobalParam('complexity', e.x / this.getWidth());
-      //      this.halo.setGlobalParam('color', e.x / this.getWidth() * 0.9);
-      //      this.halo.setGlobalParam('size', e.x / this.getWidth());
-      //    }
-      //  }.bind(this));
-      //}
 
       var fov = opts.scale;
 
@@ -236,7 +211,7 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('ringResolution', value);
       }.bind(this));
       if (opts.limitedGUI !== true) {
-          this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture);
+          this.gui.addTexture2D('Line solid', this.halo.lineSolidTexture).setPosition(180, 10);
           this.gui.addTexture2D('Line dots', this.halo.lineDotsTexture);
           this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
 
@@ -253,6 +228,16 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
       }.bind(this));
+
+      this.gui.addParam('Core smoothing', State, 'coreSmoothing', {}, function(value) {
+        this.halo.setGlobalParam('coreSmoothing', value);
+      }.bind(this));
+      this.gui.addParam('Highlight ring', State, 'highlightRing', {}, function(value) {
+        this.halo.setGlobalParam('highlightRing', value);
+      }.bind(this));
+
+
+
 
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
         this.halo.setGlobalParam('evenLineDistribution', value);
@@ -410,32 +395,36 @@ if (isBrowser) {
 }
 else {
   HaloInitialize();
-  HaloSetMode('timeline')
+  HaloSetMode('present')
   HaloSetGlobalParams({
-    size: 1,
-    color: 0.67,
-    complexity: 0.7,
-    speed: 0.5,
-    brightness: 1,
-    wobble: 0.1,
-    background: '000000',
-    growth: 0.05,
-    scale: 100,
-    solidLines: true,
-    showGrid: true,
-    evenLineDistribution: false,
-    minRingRadius: 0.6,
-    showGrid: false,
-    solidLines: false,
-    evenLineDistribution: true,
-    maxNumRings: 30,
-    minRingRadius: 0.5,
-    maxRingRadius: 1,
-    showAuraAtRing: -1,
-    auraOpacity: 1
-    //spectrum: ['FF0000', '00FF00', '0000FF']
+    //size: 1,
+    //color: 0.01,
+    //colorCenter: 0.26,
+    //colorCenterRatio: 0.5,
+    //complexity: 0.7,
+    //speed: 0.75,
+    //brightness: 1,
+    //wobble: 0.1,
+    //background: '000000',
+    //growth: 0.05,
+    //scale: 100,
+    //solidLines: true,
+    //showGrid: true,
+    //evenLineDistribution: false,
+    //minRingRadius: 0.6,
+    //showGrid: false,
+    //evenLineDistribution: true,
+    //maxNumRings: 60,
+    //minRingRadius: 0.5,
+    //maxRingRadius: 1,
+    //showAuraAtRing: -1,
+    //auraOpacity: 1,
+    //waveCount: 0,
+    //spectrum: ['FF0000', '00FF00', '0000FF'], //overrides color texture
+    //colorTexture: __dirname + '/../assets/textures/halo-gradient-new.png' //custom color gradient
   })
 
+  /*
   var lazyDay = [
       [0,0,0,0,1,1,1,1,5,6,2,1,1,1,9,1,1],
       [0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,0,0]
@@ -468,4 +457,5 @@ else {
           opacity: knokckout ? 0 : (isPrevDay ? 0.25 : 1)
       })
   }
+  */
 }
