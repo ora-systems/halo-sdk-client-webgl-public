@@ -40,7 +40,7 @@ var State = {
   evenLineDistribution: true,
   minRingRadius: 0.35,
   minNumRings: 10,
-  maxNumRings: 60,
+  maxNumRings: 80,
   ringResolution: 128,
   auraOpacity: 0.5,
   waveColor: 0.5,
