@@ -106,7 +106,16 @@ function HaloInitialize(userOpts) {
   };
   for (var p in userOpts) {
     if (userOpts.hasOwnProperty(p)) {
-      opts[p] = userOpts[p];
+      if (p == 'initialState') {
+        var hstate = userOpts[p];
+        for (var q in hstate) {
+          if (hstate.hasOwnProperty(q)) {
+            State[q] = hstate[q];
+          }
+        }
+      } else {
+        opts[p] = userOpts[p];
+      }
     }
   }
 
