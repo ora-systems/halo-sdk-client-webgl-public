@@ -47,7 +47,10 @@ var State = {
   waveCount: 0,
   waveSpeed: 0.15,
   stratified: false,
-  coreSmoothing: 0.5
+  coreSmoothing: 0.5,
+  lateralSpeedup: 2,
+  horizontalNoiseScale: 1,
+  amplitudeScale: 1
 }
 
 function HaloSetMode(mode) {
@@ -199,6 +202,15 @@ function HaloInitialize(userOpts) {
           }.bind(this));
           this.gui.addParam('Global speed', State, 'speed', {}, function(value) {
             this.halo.setGlobalParam('speed', value);
+          }.bind(this));
+          this.gui.addParam('Lateral speedup', State, 'lateralSpeedup', { min: 0, max: 5}, function(value) {
+            this.halo.setGlobalParam('lateralSpeedup', value);
+          }.bind(this));
+          this.gui.addParam('Amplitude Scale', State, 'amplitudeScale', { min: 0, max: 2}, function(value) {
+            this.halo.setGlobalParam('amplitudeScale', value);
+          }.bind(this));
+          this.gui.addParam('Horizontal Noise', State, 'horizontalNoiseScale', { min: 0, max: 1}, function(value) {
+            this.halo.setGlobalParam('horizontalNoiseScale', value);
           }.bind(this));
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Global brightness', State, 'brightness', {}, function(value) {
