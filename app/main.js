@@ -21,6 +21,7 @@ var State = {
   arcball: null,
   size: 0.6,
   color: 0.05,
+  colorStr: '0.5,0.5',
   colorCenter: 0.0,
   colorCenterRatio: 0.0,
   highlightRing: 0.8,
@@ -182,6 +183,17 @@ function HaloInitialize(userOpts) {
           }.bind(this));
           this.gui.addParam('Global color', State, 'color', {}, function(value) {
             this.halo.setGlobalParam('color', value);
+          }.bind(this));
+          this.gui.addParam('Global color (multiple)', State, 'colorStr', {}, function(value) {
+            var colorRatios = value.split(',')
+                .map(function(str) {
+                    return parseFloat(str)
+                })
+                .filter(function(f) {
+                    return !isNaN(f);
+                });
+            console.log('colorRatios', colorRatios);
+            this.halo.setGlobalParam('color', colorRatios);
           }.bind(this));
           this.gui.addParam('Global color center', State, 'colorCenter', {}, function(value) {
             this.halo.setGlobalParam('colorCenter', value);
