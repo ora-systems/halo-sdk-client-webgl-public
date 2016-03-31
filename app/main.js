@@ -46,6 +46,7 @@ var State = {
   auraOpacity: 0.5,
   waveColor: 0.5,
   waveCount: 0,
+  waveIntensity: 0,
   waveSpeed: 0.15,
   stratified: false,
   coreSmoothing: 0.5,
@@ -276,16 +277,20 @@ function HaloInitialize(userOpts) {
         this.halo.setGlobalParam('auraOpacity', value);
       }.bind(this));
 
+      this.gui.addParam('Wave intensity', State, 'waveIntensity', { min: 0, max: 1 }, function(value) {
+        this.halo.setGlobalParam('waveIntensity', value);
+      }.bind(this));
+
+      this.gui.addParam('Wave speed', State, 'waveSpeed', {}, function(value) {
+        this.halo.setGlobalParam('waveSpeed', value);
+      }.bind(this));
+
       this.gui.addParam('Wave count', State, 'waveCount', { min: 0, max: 6, step: 1 }, function(value) {
         this.halo.setGlobalParam('waveCount', value);
       }.bind(this));
 
       this.gui.addParam('Wave color', State, 'waveColor', {}, function(value) {
         this.halo.setGlobalParam('waveColor', value);
-      }.bind(this));
-
-      this.gui.addParam('Wave speed', State, 'waveSpeed', {}, function(value) {
-        this.halo.setGlobalParam('waveSpeed', value);
       }.bind(this));
 
       this.gui.addParam('Stratified', State, 'stratified', {}, function(value) {
