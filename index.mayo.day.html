@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<title>Halo</title>
+<style>
+body { margin: 0; overflow: hidden; }
+</style>
+<script src="main.web.js"></script>
+<script src="mayo-halo-controller.js"></script>
+<script src="http://sandbox.ora.me/js/mayo-data.js"></script>
+<script>
+
+window.addEventListener('load', function() {
+    var day = crtn2;
+    MayoController.setHistoricalView(true);
+    MayoController.setUserData(day.user.birthdate, day.user.height, day.user.weight, day.user.gender);
+    MayoController.resetHKData(day.data);
+    console.log(crtn1.data.length)
+    setTimeout(function() {
+        MayoController.setTimeIndex(100);
+    }, 1000)
+})
+</script>
+</body>
+</html>
