@@ -51,7 +51,8 @@ var State = {
   stratified: false,
   coreSmoothing: 0.5,
   lateralSpeedup: 2,
-  horizontalNoiseScale: 1
+  horizontalNoiseScale: 1,
+  complexityFrequency: 1.2
 }
 
 function HaloSetMode(mode) {
@@ -205,6 +206,9 @@ function HaloInitialize(userOpts) {
       }
           this.gui.addParam('Global complexity', State, 'complexity', {}, function(value) {
             this.halo.setGlobalParam('complexity', value);
+          }.bind(this));
+          this.gui.addParam('Global complexity freq', State, 'complexityFrequency', { min: 0, max: 3}, function(value) {
+            this.halo.setGlobalParam('complexityFrequency', value);
           }.bind(this));
           this.gui.addParam('Global wobble', State, 'wobble', {}, function(value) {
             this.halo.setGlobalParam('wobble', value);
