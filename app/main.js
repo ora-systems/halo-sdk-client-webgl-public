@@ -49,7 +49,6 @@ var State = {
   waveIntensity: 0,
   waveSpeed: 0.15,
   stratified: false,
-  coreSmoothing: 0.5,
   lateralSpeedup: 2,
   horizontalNoiseScale: 1,
   complexityFrequency: 1.2
@@ -259,15 +258,9 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
       }.bind(this));
-
-      this.gui.addParam('Core smoothing', State, 'coreSmoothing', {}, function(value) {
-        this.halo.setGlobalParam('coreSmoothing', value);
-      }.bind(this));
       this.gui.addParam('Highlight ring', State, 'highlightRing', {}, function(value) {
         this.halo.setGlobalParam('highlightRing', value);
       }.bind(this));
-
-
 
 
       this.gui.addParam('Even line distribution', State, 'evenLineDistribution', {}, function(value) {
