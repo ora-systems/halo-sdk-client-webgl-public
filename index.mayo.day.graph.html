@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<title>Halo</title>
+<style>
+body { font-family: arial; margin: 0; overflow: hidden; background: #444444; text-align: center; padding-right: 50%;}
+canvas { margin: 20px 0 10px 0; border: 10px solid black;}
+a { color: white; }
+#bigHalo {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+}
+#info {
+    color: white;
+    text-align: left;
+    margin-left: 30%;
+    line-height: 150%;
+}
+</style>
+</head>
+<body>
+<br/>
+<br/>
+<a href="showDay('crtn1')">crtn1</a>
+<a href="showDay('crtn2')">crtn2</a>
+<a href="showDay('crtn3')">crtn3</a>
+<a href="showDay('crtn4')">crtn4</a>
+<a href="showDay('crtn5')">crtn5</a>
+<br/>
+<canvas width="1280" height="200" id="graph"></canvas>
+<div id="info">bla</div>
+<script src="main.web.js"></script>
+<script src="app-mayo/mayo-halo-controller.js"></script>
+<script src="data/mayo-data.js"></script>
+<iframe src="index.html" frameborder="0" id="bigHalo"></iframe>
+<script>
+
+function showDay(dayId) {
+    document.location.hash = dayId;
+    document.location.reload();
+}
+
+function remap(n, oldmin, oldmax, newmin, newmax) {
+    return newmin + (n - oldmin) / (oldmax - oldmin) * (newmax - newmin)
+}
+
+/*
+MetricInterval
+cdist: 0
+deviceOn: true
+dist: 0
+flights: 0
+hcount: 0
+heart: "-"
+htot: 0
+kcal: 0.045
+label: "21:00"
+met: 0.0007142857142857143
+steps: 0
+stood: 0
+ */
+
+window.addEventListener('load', function() {
+    var dayId = 'crtn4';
+    var timeIndex = 0;
+
+    if (document.location.hash.length > 0) {
+        var tokens = document.location.hash.substr(1).split(':');
+        console.log(tokens)
+        dayId = tokens[0];
+        timeIndex = parseInt(tokens[1]);
+    }
+    var day = window[dayId];
+    MayoController.setHistoricalView(true);
+    MayoController.setUserData(day.user.birthdate, day.user.height, day.user.weight, day.user.gender);
+    MayoController.resetHKData(day.data);
+
+    var model = MayoController.getModel();
+    var canvas = document.getElementById('graph');
+    var ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth/2 - 100;
+    var W = canvas.width;
+    var H = canvas.height - 20;
+
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, W, H + 20);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(dayId, 10, 10)
+
+    for(var i=0; i<model.length; i++) {
+        var metric = model[i];
+        if (i % 6 == 0) {
+
+            ctx.fillText(metric.label, remap(i, 0, 144, 0, W), H - 10)
+        }
+    }
+
+    //STEPS GRAPH
+    ctx.fillStyle = '#00FF00';
+    ctx.fillText('STEPS', 10, 30)
+    ctx.strokeStyle = '#00FF00';
+    ctx.beginPath();
+    var totalSteps = 0;
+    ctx.moveTo(0, H - 30);
+    for(var i=0; i<model.length; i++) {
+        var metric = model[i];
+        totalSteps += metric.steps;
+        var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
+        var y = remap(totalSteps, 0, 14000, H - 30, 0) //14000 max num steps per day
+        ctx.lineTo(x, y)
+    }
+    ctx.stroke();
+
+    //HR GRAPH
+    ctx.fillStyle = '#ff0000';
+    ctx.fillText('HR', 10, 50)
+    ctx.strokeStyle = '#ff0000';
+    ctx.beginPath();
+    ctx.moveTo(0, H - 30);
+    for(var i=0; i<model.length; i++) {
+        var metric = model[i];
+        var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
+        var y = remap(metric.heart, 0, 180, H - 30, 0) //180 max hr steps per day
+        ctx.lineTo(x, y)
+    }
+    ctx.stroke();
+
+    //COMPLEXITY GRAPH
+    ctx.fillStyle = '#FFFF00';
+    ctx.fillText('COMPLEXITY', 10, 70)
+    ctx.strokeStyle = '#FFFF00';
+    ctx.beginPath();
+    ctx.moveTo(0, H - 30);
+    for(var i=0; i<model.length; i++) {
+        var metric = model[i];
+        MayoController.setTimeIndex(i);
+        var view = MayoController.getView();
+        var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
+        var y = remap(view.halo.complexity, 0, 1, H - 30, 0) //180 max hr steps per day
+        ctx.lineTo(x, y)
+    }
+    ctx.stroke();
+
+    //COMPLEXITY GRAPH
+    ctx.fillStyle = '#4444FF';
+    ctx.fillText('SIZE', 10, 90)
+    ctx.strokeStyle = '#4444FF';
+    ctx.beginPath();
+    ctx.moveTo(0, H - 30);
+    for(var i=0; i<model.length; i++) {
+        var metric = model[i];
+        MayoController.setTimeIndex(i);
+        var view = MayoController.getView();
+        var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
+        var y = remap(view.halo.size, 0, 1, H - 30, 0) //180 max hr steps per day
+        ctx.lineTo(x, y)
+    }
+    ctx.stroke();
+
+    //144, 24h * 10min intervals
+    console.log('model', MayoController.getModel().length)
+    console.log('model', MayoController.getModel()[0])
+    console.log('model', MayoController.getModel()[1])
+    console.log('model', MayoController.getModel()[2])
+
+    //wait for halo to initialize, ideally there would be a callback
+    setTimeout(function() {
+        updateAtX(W/2)
+    }, 500)
+
+    canvas.addEventListener('click', function(e) {
+        console.log('layerX', e.layerX, 'clientX', e.clientX)
+        var x = e.layerX - 10; //border
+        updateAtX(x)
+    })
+
+    function updateAtX(x) {
+
+        var t = x / W;
+        var i = 144 * t | 0;
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, H, W, 20);
+        ctx.strokeStyle = '#FFFFFF'
+        ctx.beginPath();
+        ctx.moveTo(x, H - 0)
+        ctx.lineTo(x, H + 20)
+        ctx.stroke();
+        MayoController.setTimeIndex(i);
+        var view = MayoController.getView();
+        var state = MayoController.getState();
+        console.log(state)
+        document.getElementById('info').innerHTML = ['totalSteps:', state.totalSteps, '<br/>', 'currentHeartRate:', state.currentHeartRate, '<br/>', 'complexity:', Math.floor(view.halo.complexity*100)/100, '<br/>', 'size:', Math.floor(view.halo.size*100)/100].join(' ')
+
+    }
+})
+</script>
+</body>
+</html>

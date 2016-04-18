@@ -8,19 +8,38 @@
 body { margin: 0; overflow: hidden; }
 </style>
 <script src="main.web.js"></script>
-<script src="mayo-halo-controller.js"></script>
-<script src="http://sandbox.ora.me/js/mayo-data.js"></script>
+<script src="app-mayo/mayo-halo-controller.js"></script>
+<script src="data/mayo-data.js"></script>
 <script>
 
 window.addEventListener('load', function() {
-    var day = crtn2;
+    var day = crtn4;
+    var timeIndex = 0;
+
+    if (document.location.hash.length > 0) {
+        var tokens = document.location.hash.substr(1).split(':');
+        console.log(tokens)
+        day = window[tokens[0]];
+        timeIndex = parseInt(tokens[1]);
+    }
     MayoController.setHistoricalView(true);
     MayoController.setUserData(day.user.birthdate, day.user.height, day.user.weight, day.user.gender);
     MayoController.resetHKData(day.data);
-    console.log(crtn1.data.length)
+
+    //144, 24h * 10min intervals
+    console.log('model', MayoController.getModel().length)
+    console.log('model', MayoController.getModel()[0])
+    console.log('model', MayoController.getModel()[1])
+    console.log('model', MayoController.getModel()[2])
+
+
+
+
+
+    //wait for halo to initialize, ideally there would be a callback
     setTimeout(function() {
-        MayoController.setTimeIndex(100);
-    }, 1000)
+        MayoController.setTimeIndex(timeIndex);
+    }, 500)
 })
 </script>
 </body>
