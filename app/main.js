@@ -131,7 +131,7 @@ function HaloInitialize(userOpts) {
       width: opts.width,
       height: opts.height,
       canvas: isBrowser ? document.getElementById('haloCanvas') : null,
-      fullScreen: opts.fullscreen,
+      fullScreen: opts.fullScreen,
       pixelRatio: isiOS ? 2 : 1
     },
     init: function() {

@@ -7,7 +7,7 @@
 <script src="main.web.js"></script>
 </head>
 <body style="margin:0; overflow: hidden;">
-<canvas id="haloCanvas" width="800" height="600"></canvas>
+<canvas id="haloCanvas" width="800" height="600" style="background: black"></canvas>
 <script>
 
 function splitter(c) {
@@ -22,16 +22,18 @@ var params = paramList.reduce(function(params, param) {
     return params;
 }, {})
 
+console.log(params)
 
 function PresentScenario() {
     HaloInitialize({
       fullscreen: true,
-      gui: true,
-      assetsPath: 'assets'
+      gui: false,
+      assetsPath: 'assets',
+      fullScreen: true
     });
     HaloSetMode('present');
     HaloSetGlobalParams({
-      size: params.size || 1,
+      size: params.size || 0.5,
       color: params.color || 0.01,
       colorCenter: 0.0,
       colorCenterRatio: 0.0,
@@ -58,6 +60,11 @@ function PresentScenario() {
       //spectrum: ['FF0000', '00FF00', '0000FF'] //custom color spectrum array
       //colorTexture: 'assets/textures/halo-gradient-new.png' custom color gradient
     })
+
+    setTimeout(function() {
+        HaloSetGlobalParam('complexity', 0.5)
+        HaloSetGlobalParam('color', 0.63)
+    }, 10)
 }
 
 function TimelineScenario() {
