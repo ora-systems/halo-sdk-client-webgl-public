@@ -81,7 +81,8 @@ function View() {
         width: 720,
         height: 720,
         initialState: this.halo,
-		fullScreen: this.halo.fullScreen
+        fullScreen: this.halo.fullScreen,
+        arcball: false
       });
       this.haloReady = true;
     }

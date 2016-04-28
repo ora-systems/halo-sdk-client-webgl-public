@@ -160,11 +160,14 @@ function HaloInitialize(userOpts) {
       State.camera.setPosition([0,3,0]);
       State.camera.setUp([0,0,1]);
       State.camera2D = new Camera2D(0, 0, width, height);
-      State.arcball = new Arcball(State.camera, width, height);
+      if (opts.arcball !== false) {
+        State.arcball = new Arcball(State.camera, width, height);
+        this.addEventListener(State.arcball);
+      }
 
       ctx.setProjectionMatrix(State.camera.getProjectionMatrix());
       ctx.setViewMatrix(State.camera.getViewMatrix())
-      this.addEventListener(State.arcball);
+      
     },
     onWindowResize: function() {
         State.camera.setAspectRatio(this.getWidth()/this.getHeight());
@@ -376,7 +379,7 @@ function HaloInitialize(userOpts) {
       var W = this.getWidth();
       var H = this.getHeight();
 
-      State.arcball.apply()
+      if (State.arcball) State.arcball.apply()
 
       this.halo.update();
 
