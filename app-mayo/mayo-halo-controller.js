@@ -1,4 +1,5 @@
-﻿/*
+
+/*
  * Birthdate is expected in format YYYY-MM-DD
  * Height: cm
  * Weight: kg
@@ -23,7 +24,9 @@ function MetricInterval() {
 	this.flights = 0;   // Flights climbed
 	this.stood   = 0;   // Have they stood this hour? -- also currently not used to compute anything
 	this.heart   = '-'; // Average heart rate for interval, if any. '-' = not available.
+	this.hpeak   = 0;   // Peak heart rate for the interval
 	this.steps   = 0;   // Steps taken.
+	this.exmin   = 0;   // Minutes exercised
 
 	this.htot    = 0;   // Used to compute heart average
 	this.hcount  = 0;   // Used to compute heart average
@@ -63,6 +66,7 @@ function View() {
     waveColor:       0.2,
     evenLineDistribution: true,
     background:           '000000',
+	  fullScreen: false
   };
 
   this.radiant   = true;
@@ -74,9 +78,10 @@ function View() {
 
     if (!this.haloReady) {
       HaloInitialize({
-        width: 512,
-        height: 512,
-        initialState: this.halo
+        width: 720,
+        height: 720,
+        initialState: this.halo,
+		fullScreen: this.halo.fullScreen
       });
       this.haloReady = true;
     }
@@ -93,16 +98,17 @@ function ViewState() {
   this.currentHeartRate       = 0;
   this.lastKnownHeartRate     = 0;
   this.currHeartRatio         = 0.0;
-  this.lowHeartAverage        = 0.0;
+  this.heartRest              = 'N/A';
+  this.peakHeartRate          = 'N/A';
   this.highHeartAverage       = 0.0;
 
   /* Adjusted ratios used for color */
   this.currAdjustedHeartRatio = 0.0;
-  this.lowAdjustedHeartRatio  = 0.0;
   this.highAdjustedHeartRatio = 0.0;
   this.allAdjustedHeartRatios = [];
   this.peakAdjustedHeartRatio = 0.0;
   this.exerciseIntervals      = 0;
+  this.exerciseMin            = 0;
 
   this.heartAverageMaximum    = 0;
   this.heartTarget            = 0;
@@ -115,6 +121,9 @@ function ViewState() {
 
   this.timeIndex   = 0;
 
+  /*wobbly animation when there is no data*/
+  this.noDataMode = false;
+
   this.findLatestRecord = function(model) {
   	for (var i = model.length - 1; i--; i >= 0) {
   		if (model[i].deviceOn) {
@@ -125,7 +134,6 @@ function ViewState() {
   }
 
   this.recompute = function(user, model, idx) {
-	  console.log('recompute', idx, model.length)
 
   	if (!idx) {
   		idx = this.findLatestRecord(model);
@@ -145,12 +153,13 @@ function ViewState() {
     var hRatio     = 0.0;
     var adjHRatio  = 0.0;
     var hPeak      = 0;
+    var hRest      = null;
     var heart      = 0;
     var activity   = 0;
-    var lowHTot    = 0;
-    var lowHCount  = 0;
+    var hRestArr   = [];
     var highHTot   = 0;
     var highHCount = 0;
+    var exMin      = 0;
     var stepLen    = user.gender == 'female' ? (0.413 * user.height) : (0.415 * user.height);
 
     for (var i = 0; i <= idx; i++) {
@@ -183,18 +192,14 @@ function ViewState() {
         if (heart < hMinimum) {
           heart = hMinimum;
         }
-        this.lastKnownHeartRate = heart;
-        if (heart > hPeak) {
-          hPeak = heart;
-        }
-        if (heart > hTarget) {
-          this.exerciseIntervals++;
+        if (model[i].exmin > 0) {
+        	exMin += model[i].exmin;
           highHCount++;
           highHTot += heart;
         } else {
-          lowHCount++;
-          lowHTot += heart;
+        	hRestArr.push(heart);
         }
+        this.lastKnownHeartRate = heart;
         hRatio = heart / this.heartAverageMaximum;
         adjHRatio = (heart - hMinimum) / (this.heartAverageMaximum - hMinimum);
 
@@ -204,6 +209,10 @@ function ViewState() {
         }
       } else if (model[i].deviceOn > 0) {
         this.allAdjustedHeartRatios.push(0.01);
+      }
+
+      if (model[i].hpeak > hPeak) {
+      	hPeak = model[i].hpeak;
       }
 
       // Standing - we don't actually rely on device stood hour for this. seems unreliable.
@@ -219,28 +228,54 @@ function ViewState() {
       }
     }
 
+    // Minimum non-exercise heart rate in the past hour.
+    if (hRestArr.length > 0) {
+    	for (i = hRestArr.length - 1; i >= hRestArr.length - 7; i--) {
+    		if (hRest === null || hRestArr[i] < hRest) {
+    			hRest = hRestArr[i];
+    		}
+    	}
+    }
+		if (hRest !== null) {
+		    this.heartRest = hRest;
+		} else {
+			this.heartRest = 'N/A';
+		}
+
     this.totalSteps        = steps;
     this.activity          = activity;
     this.currentSteps      = currSteps;
     this.currentHeartRate  = heart;
     this.currHeartRatio    = hRatio;
     this.peakHeartRate     = hPeak;
-    this.lowHeartAverage   = Math.round(lowHTot / lowHCount);
     this.highHeartAverage  = Math.round(highHTot / highHCount);
+    this.exerciseMin       = exMin;
 
-    this.lowAdjustedHeartRatio  = (this.lowHeartAverage - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.highAdjustedHeartRatio = (this.highHeartAverage - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.peakAdjustedHeartRatio = (hPeak - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.currAdjustedHeartRatio = adjHRatio;
 
+    this.noDataMode = this.totalSteps < 20;
   }
 
   this.normalizeComplexity = function(v) {
-    v.halo.complexity = this.currHeartRatio;
+  	if (v.radiant == true) {
+  		if (this.currHeartRatio > 0.0) {
+			  v.halo.complexity = this.currHeartRatio;
+			} else {
+				v.halo.complexity = 0.01;
+			}
+		} else {
+	  	v.halo.complexity = 0.4; // Stratified does not vary in complexity.
+		}
   }
 
   this.normalizeSpeed = function(v) {
-    v.halo.speed = this.currHeartRatio;
+  	if (this.currentHeartRatio > 0.0) {
+	    v.halo.speed = this.currHeartRatio;
+		} else {
+			v.halo.speed = 0.01;
+		}
   }
 
   this.normalizeWobble = function(v) {
@@ -263,6 +298,11 @@ function ViewState() {
     }
 
     v.halo.size = size;
+
+    v.halo.minRingRadius = this.noDataMode ? 0.0 : 0.35;
+    v.halo.maxRingRadius = this.noDataMode ? 0.5 : 1.00;
+    v.halo.size = this.noDataMode ? 0.25 : v.halo.size;
+    v.halo.complexity = this.noDataMode ? 0.35 : v.halo.complexity;
   }
 
   this.normalizeBrightness = function(v) {
@@ -271,40 +311,48 @@ function ViewState() {
   }
 
   this.normalizeColorFill = function(v) {
+  	v.halo.color = 0.0001;
     if (v.radiant == true) {
       if (!isNaN(this.currentHeartRate) && this.currentHeartRate > this.heartTarget) {
         // Exercise mode
         v.halo.color = 0.01;
       } else {
         // Regular mode
-        v.halo.color = this.lowAdjustedHeartRatio;
-      }
+        if (this.lowAdjustedHeartRatio > 0.0) {
+	        v.halo.color = this.lowAdjustedHeartRatio;
+	     }
+	  }
     } else {
-      v.halo.color = this.allAdjustedHeartRatios;
+      if (this.allAdjustedHeartRatios > 0.0) {
+	      v.halo.color = this.allAdjustedHeartRatios;
+	  }
     }
   }
 
   this.normalizeColorGradient = function(v) {
     if (v.radiant == true) {
       v.halo.colorCenter = this.peakAdjustedHeartRatio;
-      v.halo.colorCenterRatio = Math.min(0.99, this.exerciseIntervals * 0.33);
+      v.halo.colorCenterRatio = Math.min(0.99, this.exerciseMin * 0.0333);
     }
   }
 
   this.normalizeWaves = function(v) {
-    if (this.stepDelta > 10) {
-      var s = this.stepDelta;
-      if (s > 100) {
-        s = 100;
-      }
-      v.halo.waveIntensity = s / 100;
-    } else {
-      v.halo.waveIntensity = 0.0;
-    }
+  	if (v.radiant == true) {
+	    if (this.stepDelta > 10) {
+	      var s = this.stepDelta;
+	      if (s > 100) {
+	        s = 100;
+	      }
+	      v.halo.waveIntensity = s / 100;
+	    } else {
+	      v.halo.waveIntensity = 0.0;
+	    }
+	  } else {
+	  	v.halo.waveIntensity - 0.0;
+	  }
   }
 
   this.normalizeView = function(view) {
-	  console.log('normalizeView', view)
     this.normalizeComplexity(view);
     this.normalizeColorFill(view);
     this.normalizeColorGradient(view);
@@ -313,6 +361,11 @@ function ViewState() {
     this.normalizeSpeed(view);
     this.normalizeBrightness(view);
     this.normalizeWaves(view);
+    if (view.radiant == true) {
+    	view.halo.highlightRing = 0.75;
+    } else {
+    	view.halo.highlightRing = 1.1;
+    }
   }
 }
 
@@ -325,6 +378,8 @@ var MayoController = (function() {
 	var view  = new View();
 	var observers = [];
 	var timeIndex = 0;
+	var beat      = -1;
+	var bct       = 0;
 	var historicalView = false;
 
 	function resetModel() {
@@ -372,15 +427,27 @@ var MayoController = (function() {
 	}
 
 	// Heavy lifting of metric updating. Could have done this polymorphically, but... meh.
-	function updateMetric(d, idx) {
+	function updateMetric(d, idx, b) {
 		switch(d.type) {
 		case 'HKQuantityTypeIdentifierHeartRate':
-			if (d.unit != 'count/min') {
+			if (d.unit != 'count/min' && d.unit != 'bpm') {
 				return false;
 			}
 			model[idx].htot += d.value;
 			model[idx].hcount ++;
 			model[idx].heart = model[idx].htot / model[idx].hcount;
+			if (d.value > model[idx].hpeak) {
+				model[idx].hpeak = d.value;
+			}
+			if (b == beat) {
+				if (bct == 0) {
+					model[idx].exmin++;
+					bct = 1;
+				}
+			} else {
+				beat = b;
+				bct  = 0;
+			}
 			break;
 		case 'HKQuantityTypeIdentifierStepCount':
 			if (d.unit != 'count') {
@@ -448,12 +515,12 @@ var MayoController = (function() {
 		// Identify metric interval.
 		var h = t.getHours();
 		var m = t.getMinutes();
+		var b = h * 60 + m;
 		var idx = h * 6 + Math.floor(m / 10);
 		if (idx > timeIndex) {
 			timeIndex = idx;
 		}
-
-		if (!updateMetric(d, idx)) {
+		if (!updateMetric(d, idx, b)) {
 			console.log("Error updating metric " + d.type + " with unit: " + d.unit + " and value: " + d.value);
 		} else {
 			model[idx].deviceOn = true;
@@ -488,17 +555,20 @@ var MayoController = (function() {
 	/* Blow away all prior data and start fresh. */
 	function reset(data) {
 		model = null;
+		beat  = -1;
+		bct   = 0;
 		append(data);
 	}
 
 	function setDisplayMode(mode) {
 		if (mode == 'radiant') {
 			view.radiant = true;
-		} else if (mode == 'stratfied') {
+		} else if (mode == 'stratified') {
 			view.radiant = false;
 		} else {
 			console.log("Unexpected input to displayMode: " + mode);
 		}
+		updateHalo();
 	}
 
 	function addObserver(fn) {
