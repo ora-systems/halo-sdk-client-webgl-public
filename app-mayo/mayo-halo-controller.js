@@ -23,7 +23,8 @@ function MetricInterval() {
 	this.cdist   = 0;   // Distance cycling
 	this.flights = 0;   // Flights climbed
 	this.stood   = 0;   // Have they stood this hour? -- also currently not used to compute anything
-	this.heart   = '-'; // Average heart rate for interval, if any. '-' = not available.
+	this.heart   = '-'; // Current heart rate for interval, if any. '-' = not available.
+	this.havg    = '-'; // Average heart rate for interval, if any. '-' = not available.
 	this.hpeak   = 0;   // Peak heart rate for the interval
 	this.steps   = 0;   // Steps taken.
 	this.exmin   = 0;   // Minutes exercised
@@ -373,7 +374,7 @@ function ViewState() {
 var MayoController = (function() {
 
 	var user  = null;
-	var model = null;
+	var model = [];
 	var state = new ViewState();
 	var curr  = new Date();
 	var view  = new View();
@@ -384,6 +385,8 @@ var MayoController = (function() {
 	var historicalView = false;
 
 	function resetModel() {
+		beat = -1;
+		bct  = 0;
 		model = [];
 		for (var i = 0; i < 144; i++) {
 			model[i] = new MetricInterval();
@@ -392,6 +395,11 @@ var MayoController = (function() {
 	}
 
 	function updateHalo() {
+
+		if (model.length == 0) {
+			resetModel();
+		}
+
 		state.recompute(user, model, timeIndex);
 		state.normalizeView(view);
 		view.render();
@@ -412,7 +420,7 @@ var MayoController = (function() {
 			  d.getMonth() != curr.getMonth() ||
 			  d.getDate()  != curr.getDate() )
 		{
-			model = null;
+			resetModel();
 			curr  = d;
 		}
 	}
@@ -436,7 +444,8 @@ var MayoController = (function() {
 			}
 			model[idx].htot += d.value;
 			model[idx].hcount ++;
-			model[idx].heart = model[idx].htot / model[idx].hcount;
+			model[idx].heart = d.value;
+			model[idx].havg = model[idx].htot / model[idx].hcount;
 			if (d.value > model[idx].hpeak) {
 				model[idx].hpeak = d.value;
 			}
@@ -536,7 +545,7 @@ var MayoController = (function() {
 			advanceDateIfRequired();
 		}
 
-		if (model == null) {
+		if (model.length == 0) {
 			resetModel();
 		}
 
@@ -555,9 +564,7 @@ var MayoController = (function() {
 
 	/* Blow away all prior data and start fresh. */
 	function reset(data) {
-		model = null;
-		beat  = -1;
-		bct   = 0;
+		resetModel();
 		append(data);
 	}
 
