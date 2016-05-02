@@ -33,6 +33,7 @@ a { color: white; }
 <a href="javascript:showDay('crtn5')">crtn5</a>
 <a href="javascript:showDay('stephen1')">stephen 27th</a>
 <a href="javascript:showDay('stephen2')">stephen 29th</a>
+<a href="javascript:showDay('stephen3')">stephen May 1st</a>
 <br/>
 <canvas width="1280" height="200" id="graph"></canvas>
 <div id="info">bla</div>
@@ -41,6 +42,7 @@ a { color: white; }
 <script src="data/mayo-data.js"></script>
 <script src="data/export-stephen-2016-04-27.js"></script>
 <script src="data/export-stephen-2016-04-29.js"></script>
+<script src="data/export-stephen-2016-05-01.js"></script>
 <!--<iframe src="index.html" frameborder="0" id="bigHalo"></iframe>-->
 <script>
 
@@ -127,7 +129,7 @@ window.addEventListener('load', function() {
         var metric = model[i];
         totalSteps += metric.steps;
         var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
-        var y = remap(totalSteps, 0, 20000, H - 30, 10) //14000 max num steps per day
+        var y = Math.max(0, remap(totalSteps, 0, 20000, H - 30, 10)) //14000 max num steps per day
         ctx.lineTo(x, y)
     }
     ctx.stroke();
