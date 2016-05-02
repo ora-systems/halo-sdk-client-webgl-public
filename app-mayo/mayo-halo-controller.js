@@ -261,27 +261,37 @@ function ViewState() {
   }
 
   this.normalizeComplexity = function(v) {
-  	if (v.radiant == true) {
-  		if (this.currHeartRatio > 0.0) {
-			  v.halo.complexity = this.currHeartRatio;
-			} else {
-				v.halo.complexity = 0.01;
-			}
+	if (v.radiant == true) {
+		if (this.currHeartRatio > 0.0) {
+			v.halo.complexity = this.currHeartRatio;
 		} else {
-	  	v.halo.complexity = 0.4; // Stratified does not vary in complexity.
+			v.halo.complexity = 0.01;
 		}
+	} else {
+		v.halo.complexity = 0.5; // Stratified does not vary in complexity.
+	}
   }
 
   this.normalizeSpeed = function(v) {
-  	if (this.currentHeartRatio > 0.0) {
+    if (v.radiant == true) {
+  	  if (this.currentHeartRatio > 0.0) {
 	    v.halo.speed = this.currHeartRatio;
-		} else {
-			v.halo.speed = 0.01;
-		}
+	  } else {
+	    v.halo.speed = 0.01;
+	  }
+    }
+	else {
+	  v.halo.speed = 0.5;
+	}
   }
 
   this.normalizeWobble = function(v) {
-    v.wobble = 1.0 - this.hoursStood;
+	if (v.radiant == true) {
+      v.halo.wobble = 1.0 - this.hoursStood;
+    }
+	else {
+	  v.halo.wobble = 0;
+	}
   }
 
   /* 0-10000 steps linear to 75%
@@ -300,11 +310,6 @@ function ViewState() {
     }
 
     v.halo.size = size;
-
-    v.halo.minRingRadius = this.noDataMode ? 0.0 : 0.35;
-    v.halo.maxRingRadius = this.noDataMode ? 0.5 : 1.00;
-    v.halo.size = this.noDataMode ? 0.25 : v.halo.size;
-    v.halo.complexity = this.noDataMode ? 0.35 : v.halo.complexity;
   }
 
   this.normalizeBrightness = function(v) {
@@ -314,10 +319,12 @@ function ViewState() {
 
   this.normalizeColorFill = function(v) {
   	v.halo.color = 0.0001;
+	console.log('radiant', v.radiant, 'allAdjustedHeartRatios', this.allAdjustedHeartRatios)
     if (v.radiant == true) {
       if (!isNaN(this.currentHeartRate) && this.currentHeartRate > this.heartTarget) {
         // Exercise mode
-        v.halo.color = 0.01;
+        //v.halo.color = 0.01;
+		v.halo.color = this.lowAdjustedHeartRatio;
       } else {
         // Regular mode
         if (this.lowAdjustedHeartRatio > 0.0) {
@@ -325,7 +332,7 @@ function ViewState() {
 	     }
 	  }
     } else {
-      if (this.allAdjustedHeartRatios > 0.0) {
+      if (this.allAdjustedHeartRatios.length > 0) {
 	      v.halo.color = this.allAdjustedHeartRatios;
 	  }
     }
@@ -354,15 +361,36 @@ function ViewState() {
 	  }
   }
 
+  this.normalizeStratifiedMode = function(v) {
+	  v.halo.stratified = !v.radiant
+  }
+
   this.normalizeView = function(view) {
     this.normalizeComplexity(view);
     this.normalizeColorFill(view);
     this.normalizeColorGradient(view);
     this.normalizeWobble(view);
-    this.normalizeSize(view);
     this.normalizeSpeed(view);
     this.normalizeBrightness(view);
     this.normalizeWaves(view);
+	this.normalizeStratifiedMode(view);
+	this.normalizeSize(view);
+
+	if (this.noDataMode) {
+		view.halo.size = 0.25;
+		view.halo.complexity = 0.25;
+		view.halo.minRingRadius = 0;
+		view.halo.maxRingRadius = 0.5;
+		view.halo.stratified = false;
+		view.halo.color = 0.0;
+		view.halo.colorCenter = 0.2;
+		view.halo.colorCenterRatio = 0.5;
+	}
+	else {
+		view.halo.minRingRadius = 0.35;
+		view.halo.maxRingRadius = 1.00;
+	}
+
     if (view.radiant == true) {
     	view.halo.highlightRing = 0.75;
     } else {

@@ -90,12 +90,11 @@ window.addEventListener('load', function() {
     })
     console.log('day', day, day.data.length);
     day.data.forEach(function(d) {
-        console.log(d.date);
     });
 
     MayoController.setUserData(day.user.birthdate, day.user.height, day.user.weight, day.user.gender);
     MayoController.resetHKData(day.data);
-    MayoController.setDisplayMode('stratified');
+    //MayoController.setDisplayMode('stratified');
 
     var model = MayoController.getModel();
     var canvas = document.getElementById('graph');
@@ -209,7 +208,6 @@ window.addEventListener('load', function() {
         var metric = model[i];
         MayoController.setTimeIndex(i);
         var view = MayoController.getView();
-        console.log(view.halo.color);
         var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
         var y = remap(view.halo.color, 0, 1, H - 30, 10) //180 max hr steps per day
         ctx.lineTo(x, y)
@@ -226,7 +224,6 @@ window.addEventListener('load', function() {
         var metric = model[i];
         MayoController.setTimeIndex(i);
         var view = MayoController.getView();
-        console.log(view.halo.colorCenter);
         var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
         var y = remap(Math.max(0,view.halo.colorCenter), 0, 1, H - 30, 10) //180 max hr steps per day
         ctx.lineTo(x, y)
@@ -243,7 +240,6 @@ window.addEventListener('load', function() {
         var metric = model[i];
         MayoController.setTimeIndex(i);
         var view = MayoController.getView();
-        console.log(view.halo.colorCenterRatio);
         var x = remap(i, 0, 144, 0, W); //24h * 6 readings @ every 10min
         var y = remap(Math.max(0,view.halo.colorCenterRatio), 0, 1, H - 30, 10) //180 max hr steps per day
         ctx.lineTo(x, y)
@@ -281,7 +277,6 @@ window.addEventListener('load', function() {
         MayoController.setTimeIndex(i);
         var view = MayoController.getView();
         var state = MayoController.getState();
-        console.log(state)
         document.getElementById('info').innerHTML =
             ['totalSteps:',
             state.totalSteps, '<br/>',
