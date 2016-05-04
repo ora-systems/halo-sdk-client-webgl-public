@@ -10,6 +10,8 @@ function User(b, h, w, g) {
 	this.height = h;
 	this.weight = w;
 	this.gender = g;
+  this.heartAverageMaximum = Math.max(150, 200 - (this.age - 20));
+  this.heartTarget = this.heartAverageMaximum / 2;
 }
 
 function MetricInterval() {
@@ -144,6 +146,7 @@ function ViewState() {
     // Heart Range
     this.heartAverageMaximum = Math.max(150, 200 - (user.age - 20));
     this.heartTarget = this.heartAverageMaximum / 2;
+    this.allAdjustedHeartRatios = [];
 
     // Compute Totals:
     var steps      = 0;
@@ -161,7 +164,7 @@ function ViewState() {
     var hRestArr   = [];
     var highHTot   = 0;
     var highHCount = 0;
-    var exMin      = 0;
+    var exMin      = 0;    
     var stepLen    = user.gender == 'female' ? (0.413 * user.height) : (0.415 * user.height);
 
     for (var i = 0; i <= idx; i++) {
@@ -317,24 +320,40 @@ function ViewState() {
     v.halo.brightness = 1.0;
   }
 
+  this.simplifyHeartArray = function() {
+  	var condensedHeart = [];
+  	var hSum = 0;
+  	var i;
+  	for (i = 0; i < this.allAdjustedHeartRatios.length; i++) {
+  		hSum += this.allAdjustedHeartRatios[i];
+  		if (i % 10 == 0) {
+  			condensedHeart.push(hSum / 10);
+  			hSum = 0;
+  		}  		
+  	}
+  	if (i % 10 > 0) {
+  		condensedHeart.push(hSum / i % 10);
+  	}
+  	return condensedHeart;
+  }
+
   this.normalizeColorFill = function(v) {
   	v.halo.color = 0.0001;
-	console.log('radiant', v.radiant, 'allAdjustedHeartRatios', this.allAdjustedHeartRatios)
     if (v.radiant == true) {
       if (!isNaN(this.currentHeartRate) && this.currentHeartRate > this.heartTarget) {
         // Exercise mode
         //v.halo.color = 0.01;
-		v.halo.color = this.lowAdjustedHeartRatio;
+				v.halo.color = this.lowAdjustedHeartRatio;
       } else {
         // Regular mode
         if (this.lowAdjustedHeartRatio > 0.0) {
 	        v.halo.color = this.lowAdjustedHeartRatio;
-	     }
-	  }
-    } else {
+	    	}
+	  	}
+	  } else {
       if (this.allAdjustedHeartRatios.length > 0) {
-	      v.halo.color = this.allAdjustedHeartRatios;
-	  }
+	      v.halo.color = this.simplifyHeartArray();
+		  }
     }
   }
 
@@ -362,7 +381,7 @@ function ViewState() {
   }
 
   this.normalizeStratifiedMode = function(v) {
-	  v.halo.stratified = !v.radiant
+	  v.halo.stratified = !v.radiant;
   }
 
   this.normalizeView = function(view) {
@@ -373,23 +392,23 @@ function ViewState() {
     this.normalizeSpeed(view);
     this.normalizeBrightness(view);
     this.normalizeWaves(view);
-	this.normalizeStratifiedMode(view);
-	this.normalizeSize(view);
+		this.normalizeStratifiedMode(view);
+		this.normalizeSize(view);
 
-	if (this.noDataMode) {
-		view.halo.size = 0.25;
-		view.halo.complexity = 0.25;
-		view.halo.minRingRadius = 0;
-		view.halo.maxRingRadius = 0.5;
-		view.halo.stratified = false;
-		view.halo.color = 0.0;
-		view.halo.colorCenter = 0.2;
-		view.halo.colorCenterRatio = 0.5;
-	}
-	else {
-		view.halo.minRingRadius = 0.35;
-		view.halo.maxRingRadius = 1.00;
-	}
+		if (this.noDataMode) {
+			view.halo.size = 0.25;
+			view.halo.complexity = 0.25;
+			view.halo.minRingRadius = 0;
+			view.halo.maxRingRadius = 0.5;
+			view.halo.stratified = false;
+			view.halo.color = 0.0;
+			view.halo.colorCenter = 0.2;
+			view.halo.colorCenterRatio = 0.5;
+		}
+		else {
+			view.halo.minRingRadius = 0.35;
+			view.halo.maxRingRadius = 1.00;
+		}
 
     if (view.radiant == true) {
     	view.halo.highlightRing = 0.75;
@@ -478,7 +497,7 @@ var MayoController = (function() {
 				model[idx].hpeak = d.value;
 			}
 			if (b == beat) {
-				if (bct == 0) {
+				if (bct == 0 && d.value >= user.heartTarget) {
 					model[idx].exmin++;
 					bct = 1;
 				}
