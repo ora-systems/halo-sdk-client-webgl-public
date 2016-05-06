@@ -169,6 +169,21 @@ function ViewState() {
 
     for (var i = 0; i <= idx; i++) {
 
+      // Standing - we don't actually rely on device stood hour for this. seems unreliable.
+      if (currSteps > 0) {
+        thisHour = 6;
+      } else {
+        thisHour--;
+      }
+      console.log("wobble stand: " + model[i].label);
+      console.log(thisHour);
+      if (thisHour > 0) {      	
+        this.hoursStood = 1.0;
+      } else {
+        this.hoursStood = 0.0001;
+      }
+
+
       if (!model[i].deviceOn) {
       	continue;
       }
@@ -220,17 +235,6 @@ function ViewState() {
       	hPeak = model[i].hpeak;
       }
 
-      // Standing - we don't actually rely on device stood hour for this. seems unreliable.
-      if (currSteps > 0) {
-        thisHour = 6;
-      } else {
-        thisHour--;
-      }
-      if (thisHour > 0) {
-        this.hoursStood = 1.0;
-      } else {
-        this.hoursStood = 0.0001;
-      }
     }
 
     // Minimum non-exercise heart rate in the past hour.
