@@ -108,7 +108,7 @@ function ViewState() {
 
   /* Adjusted ratios used for color */
   this.currAdjustedHeartRatio = 0.0;
-  this.highAdjustedHeartRatio = 0.0;
+  this.highAdjustedHeartAverageRatio = 0.0;
   this.allAdjustedHeartRatios = [];
   this.peakAdjustedHeartRatio = 0.0;
   this.exerciseIntervals      = 0;
@@ -164,10 +164,18 @@ function ViewState() {
     var hRestArr   = [];
     var highHTot   = 0;
     var highHCount = 0;
+    var lowHTot    = 0;
+    var lowHCount  = 0;
     var exMin      = 0;    
     var stepLen    = user.gender == 'female' ? (0.413 * user.height) : (0.415 * user.height);
 
     for (var i = 0; i <= idx; i++) {
+
+      // Steps
+      priorSteps = currSteps;
+      currSteps  = model[i].steps;
+      steps += currSteps;
+      this.stepDelta = currSteps - priorSteps;
 
       // Standing - we don't actually rely on device stood hour for this. seems unreliable.
       if (currSteps > 0) {
@@ -175,24 +183,16 @@ function ViewState() {
       } else {
         thisHour--;
       }
-      console.log("wobble stand: " + model[i].label);
-      console.log(thisHour);
+
       if (thisHour > 0) {      	
         this.hoursStood = 1.0;
       } else {
         this.hoursStood = 0.0001;
       }
 
-
       if (!model[i].deviceOn) {
       	continue;
       }
-
-      // Steps
-      priorSteps = currSteps;
-      currSteps  = model[i].steps;
-      steps += currSteps;
-      this.stepDelta = currSteps - priorSteps;
 
       //  cycling distance as steps
       var cycSteps = model[i].cdist / 1000 * 0.339;
@@ -211,6 +211,10 @@ function ViewState() {
         }
         if (heart < hMinimum) {
           heart = hMinimum;
+        }
+        if (heart < hTarget) {
+        	lowHCount++;
+        	lowHTot += heart;
         }
         if (model[i].exmin > 0) {
         	exMin += model[i].exmin;
@@ -260,6 +264,9 @@ function ViewState() {
     this.highHeartAverage  = Math.round(highHTot / highHCount);
     this.exerciseMin       = exMin;
 
+    var lowHAvg            = lowHTot / lowHCount;
+
+    this.lowAdjustedHeartAverageRatio = (lowHAvg - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.highAdjustedHeartRatio = (this.highHeartAverage - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.peakAdjustedHeartRatio = (hPeak - hMinimum) / (this.heartAverageMaximum - hMinimum);
     this.currAdjustedHeartRatio = adjHRatio;
@@ -268,37 +275,36 @@ function ViewState() {
   }
 
   this.normalizeComplexity = function(v) {
-	if (v.radiant == true) {
-		if (this.currHeartRatio > 0.0) {
-			v.halo.complexity = this.currHeartRatio;
+		if (v.radiant == true) {
+			if (this.currHeartRatio > 0.0) {
+				v.halo.complexity = this.currHeartRatio;
+			} else {
+				v.halo.complexity = 0.01;
+			}
 		} else {
-			v.halo.complexity = 0.01;
+			v.halo.complexity = 0.5; // Stratified does not vary in complexity.
 		}
-	} else {
-		v.halo.complexity = 0.5; // Stratified does not vary in complexity.
-	}
   }
 
   this.normalizeSpeed = function(v) {
     if (v.radiant == true) {
   	  if (this.currentHeartRatio > 0.0) {
-	    v.halo.speed = this.currHeartRatio;
-	  } else {
-	    v.halo.speed = 0.01;
-	  }
-    }
-	else {
-	  v.halo.speed = 0.5;
-	}
+	  	  v.halo.speed = this.currHeartRatio;
+	  	} else {
+	    	v.halo.speed = 0.01;
+		  }
+    } else {
+		  v.halo.speed = 0.5;
+		}
   }
 
   this.normalizeWobble = function(v) {
-	if (v.radiant == true) {
-      v.halo.wobble = 1.0 - this.hoursStood;
-    }
-	else {
-	  v.halo.wobble = 0;
-	}
+		if (v.radiant == true) {
+	      v.halo.wobble = 1.0 - this.hoursStood;
+	    }
+		else {
+		  v.halo.wobble = 0;
+		}
   }
 
   /* 0-10000 steps linear to 75%
@@ -344,16 +350,9 @@ function ViewState() {
   this.normalizeColorFill = function(v) {
   	v.halo.color = 0.0001;
     if (v.radiant == true) {
-      if (!isNaN(this.currentHeartRate) && this.currentHeartRate > this.heartTarget) {
-        // Exercise mode
-        //v.halo.color = 0.01;
-				v.halo.color = this.lowAdjustedHeartRatio;
-      } else {
-        // Regular mode
-        if (this.lowAdjustedHeartRatio > 0.0) {
-	        v.halo.color = this.lowAdjustedHeartRatio;
-	    	}
-	  	}
+    	if (!isNaN(this.lowAdjustedHeartAverageRatio) && this.lowAdjustedHeartAverageRatio > 0.0) {
+        v.halo.color = this.lowAdjustedHeartAverageRatio;
+    	}
 	  } else {
       if (this.allAdjustedHeartRatios.length > 0) {
 	      v.halo.color = this.simplifyHeartArray();
@@ -363,7 +362,7 @@ function ViewState() {
 
   this.normalizeColorGradient = function(v) {
     if (v.radiant == true) {
-      v.halo.colorCenter = this.peakAdjustedHeartRatio;
+      v.halo.colorCenter      = this.peakAdjustedHeartRatio;
       v.halo.colorCenterRatio = Math.min(0.99, this.exerciseMin * 0.0333);
     }
   }
@@ -380,7 +379,7 @@ function ViewState() {
 	      v.halo.waveIntensity = 0.0;
 	    }
 	  } else {
-	  	v.halo.waveIntensity - 0.0;
+	  	v.halo.waveIntensity = 0.0;
 	  }
   }
 
@@ -434,12 +433,13 @@ var MayoController = (function() {
 	var beat      = -1;
 	var bct       = 0;
 	var historicalView = false;
+	var maxTimeIndex   = 143;
 
 	function resetModel() {
 		beat = -1;
 		bct  = 0;
 		model = [];
-		for (var i = 0; i < 144; i++) {
+		for (var i = 0; i <= maxTimeIndex; i++) {
 			model[i] = new MetricInterval();
 			model[i].label = Math.floor(i / 6) + ':' + (i % 6) + '0';
 		}
@@ -643,6 +643,7 @@ var MayoController = (function() {
 	}
 
 	function setTimeIndex(idx) {
+		if (idx > maxTimeIndex) { idx = maxTimeIndex; }
 		timeIndex = idx;
 		updateHalo();
 	}
