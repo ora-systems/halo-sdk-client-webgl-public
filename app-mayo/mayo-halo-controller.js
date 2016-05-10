@@ -69,7 +69,7 @@ function View() {
     waveColor:       0.2,
     evenLineDistribution: true,
     background:           '000000',
-	  fullScreen: false
+	  fullScreen: true
   };
 
   this.radiant   = true;
@@ -166,7 +166,7 @@ function ViewState() {
     var highHCount = 0;
     var lowHTot    = 0;
     var lowHCount  = 0;
-    var exMin      = 0;    
+    var exMin      = 0;
     var stepLen    = user.gender == 'female' ? (0.413 * user.height) : (0.415 * user.height);
 
     for (var i = 0; i <= idx; i++) {
@@ -184,7 +184,7 @@ function ViewState() {
         thisHour--;
       }
 
-      if (thisHour > 0) {      	
+      if (thisHour > 0) {
         this.hoursStood = 1.0;
       } else {
         this.hoursStood = 0.0001;
@@ -339,7 +339,7 @@ function ViewState() {
   		if (i % 10 == 0) {
   			condensedHeart.push(hSum / 10);
   			hSum = 0;
-  		}  		
+  		}
   	}
   	if (i % 10 > 0) {
   		condensedHeart.push(hSum / i % 10);
