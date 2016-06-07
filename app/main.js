@@ -51,7 +51,8 @@ var State = {
   stratified: false,
   lateralSpeedup: 2,
   horizontalNoiseScale: 1,
-  complexityFrequency: 1.2
+  complexityFrequency: 1.2,
+  tilt: 0
 }
 
 function HaloSetMode(mode) {
@@ -144,7 +145,8 @@ function HaloInitialize(userOpts) {
       State.halo = this.halo = new Halo(ctx, this, {
         lineDotsTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-dots.png') : ASSETS_PATH + '/textures/line-dots.png',
         lineSolidTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
-        colorTexture: isBrowser ? urify(__dirname + '/../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
+        colorTexture: isBrowser ? urify(__dirname + '/../assets/textures/calories-gradient-v2.png') : ASSETS_PATH + '/textures/calories-gradient-v2.png',
+        colorTextureOld: isBrowser ? urify(__dirname + '/../assets/textures/calories-gradient.png') : ASSETS_PATH + '/textures/calories-gradient.png',
         gridColorTexture: isBrowser ? urify(__dirname + '/../assets/textures/line-solid.png') : ASSETS_PATH + '/textures/line-solid.png',
       });
 
@@ -167,7 +169,6 @@ function HaloInitialize(userOpts) {
 
       ctx.setProjectionMatrix(State.camera.getProjectionMatrix());
       ctx.setViewMatrix(State.camera.getViewMatrix())
-      
     },
     onWindowResize: function() {
         State.camera.setAspectRatio(this.getWidth()/this.getHeight());
@@ -181,6 +182,9 @@ function HaloInitialize(userOpts) {
       else if (isiOS) this.gui.toggleEnabled();
 
       this.gui.addHeader('Global Params')
+      this.gui.addParam('Tilt', State, 'tilt', { min: -90, max: 90 }, function(value) {
+        this.halo.setGlobalParam('tilt', value)
+      }.bind(this))
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Global size', State, 'size', {}, function(value) {
             this.halo.setGlobalParam('size', value);
@@ -257,6 +261,7 @@ function HaloInitialize(userOpts) {
       }.bind(this));
 
       this.gui.addTexture2D('Color texture', this.halo.colorTexture);
+      this.gui.addTexture2D('Color texture (old)', this.halo.colorTextureOld);
 
       this.gui.addParam('Min ring radius', State, 'minRingRadius', {}, function(value) {
         this.halo.setGlobalParam('minRingRadius', value);
