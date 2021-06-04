@@ -52,7 +52,8 @@ var State = {
   lateralSpeedup: 2,
   horizontalNoiseScale: 1,
   complexityFrequency: 1.2,
-  tilt: 0
+  tilt: 0,
+  rotationSpeed: 0
 }
 
 function HaloSetMode(mode) {
@@ -185,6 +186,9 @@ function HaloInitialize(userOpts) {
       this.gui.addParam('Tilt', State, 'tilt', { min: -90, max: 90 }, function(value) {
         this.halo.setGlobalParam('tilt', value)
       }.bind(this))
+      this.gui.addParam('Rotation Speed', State, 'rotationSpeed', { min: -1, max: 1 }, function(value) {
+        this.halo.setGlobalParam('rotationSpeed', value)
+      }.bind(this))
       if (opts.limitedGUI !== true) {
           this.gui.addParam('Global size', State, 'size', {}, function(value) {
             this.halo.setGlobalParam('size', value);
@@ -253,7 +257,6 @@ function HaloInitialize(userOpts) {
           this.gui.addTexture2D('Grid color', this.halo.gridColorTexture);
 
           this.gui.addTexture2D('Color spectrum (overrides texture)', this.halo.colorSpectrumTexture);
-
       }
 
       this.gui.addParam('Max num rings', State, 'maxNumRings', { min: 1, max: 100 }, function(value) {
